@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Devocionário — Santos, Santas e Nossas Senhoras</title>
+<style>
+  :root{
+    --indigo:#1B2541;
+    --indigo-deep:#11172B;
+    --gold:#C9A227;
+    --gold-bright:#E8C766;
+    --parchment:#F4ECD8;
+    --parchment-dim:#E5DCC2;
+    --ink:#2A2118;
+    --line: rgba(201,162,39,0.35);
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --display: 'Cinzel', Georgia, serif;
+    --sans: 'Lato', Arial, sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Lato:wght@400;700&display=swap');
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--indigo-deep);color:var(--parchment);font-family:var(--serif);}
+
+  body{
+    background:
+      radial-gradient(circle at 50% 0%, rgba(201,162,39,0.08), transparent 60%),
+      linear-gradient(180deg, var(--indigo-deep), var(--indigo) 40%, var(--indigo-deep));
+    min-height:100vh;
+  }
+
+  header{
+    text-align:center;
+    padding:56px 20px 28px;
+    position:relative;
+  }
+  header::after{
+    content:"";
+    display:block;
+    width:140px;height:1px;
+    margin:18px auto 0;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .eyebrow{
+    font-family:var(--sans);
+    letter-spacing:3px;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--gold-bright);
+    opacity:.85;
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(28px,5vw,46px);
+    margin:10px 0 6px;
+    letter-spacing:1px;
+    color:var(--parchment);
+    text-shadow:0 0 24px rgba(201,162,39,0.25);
+  }
+  .subtitle{
+    font-style:italic;
+    color:var(--parchment-dim);
+    font-size:17px;
+    max-width:520px;
+    margin:0 auto;
+  }
+
+  .controls{
+    max-width:880px;
+    margin:0 auto 30px;
+    padding:0 20px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .search-wrap{
+    position:relative;
+  }
+  #search{
+    width:100%;
+    padding:14px 18px 14px 44px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:rgba(244,236,216,0.06);
+    color:var(--parchment);
+    font-family:var(--sans);
+    font-size:15px;
+    outline:none;
+    transition:border-color .2s, background .2s;
+  }
+  #search::placeholder{color:rgba(244,236,216,0.5);}
+  #search:focus{border-color:var(--gold); background:rgba(244,236,216,0.1);}
+  .search-icon{
+    position:absolute; left:16px; top:50%; transform:translateY(-50%);
+    color:var(--gold-bright); font-size:15px; opacity:.8;
+  }
+
+  .filters{
+    display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+    font-family:var(--sans);
+  }
+  .filter-pill{
+    padding:8px 18px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--parchment-dim);
+    font-size:13px;
+    letter-spacing:.5px;
+    cursor:pointer;
+    transition:all .2s;
+  }
+  .filter-pill:hover{border-color:var(--gold-bright); color:var(--parchment);}
+  .filter-pill.active{
+    background:var(--gold);
+    color:var(--indigo-deep);
+    border-color:var(--gold);
+    font-weight:700;
+  }
+
+  .grid{
+    max-width:1100px;
+    margin:0 auto;
+    padding:0 20px 80px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(230px, 1fr));
+    gap:18px;
+  }
+
+  .card{
+    background:linear-gradient(160deg, rgba(244,236,216,0.07), rgba(244,236,216,0.02));
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:22px 18px 20px;
+    cursor:pointer;
+    position:relative;
+    transition:transform .25s, border-color .25s, background .25s;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(circle at 30% 0%, rgba(201,162,39,0.18), transparent 55%);
+    opacity:0;
+    transition:opacity .3s;
+  }
+  .card:hover{ transform:translateY(-3px); border-color:var(--gold-bright); }
+  .card:hover::before{opacity:1;}
+
+  .initial{
+    font-family:var(--display);
+    font-size:30px;
+    color:var(--gold-bright);
+    width:48px;height:48px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:14px;
+    box-shadow:0 0 18px rgba(201,162,39,0.25) inset;
+    position:relative;
+    z-index:1;
+  }
+  .card-name{
+    font-family:var(--display);
+    font-size:18px;
+    line-height:1.3;
+    margin:0 0 6px;
+    color:var(--parchment);
+    position:relative; z-index:1;
+  }
+  .card-tag{
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--gold-bright);
+    opacity:.8;
+    position:relative; z-index:1;
+  }
+  .card-padroeiro{
+    font-family:var(--sans);
+    font-size:13px;
+    color:var(--parchment-dim);
+    margin-top:10px;
+    font-style:italic;
+    position:relative; z-index:1;
+  }
+
+  .empty{
+    text-align:center;
+    font-family:var(--sans);
+    color:var(--parchment-dim);
+    padding:60px 20px;
+    grid-column:1/-1;
+  }
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(10,13,25,0.78);
+    backdrop-filter:blur(3px);
+    display:none;
+    align-items:center; justify-content:center;
+    padding:20px;
+    z-index:50;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:linear-gradient(160deg, var(--indigo), var(--indigo-deep));
+    border:1px solid var(--gold);
+    border-radius:6px;
+    max-width:560px;
+    width:100%;
+    max-height:85vh;
+    overflow-y:auto;
+    padding:36px 32px 30px;
+    position:relative;
+    box-shadow:0 0 60px rgba(201,162,39,0.15);
+  }
+  .modal-close{
+    position:absolute; top:16px; right:18px;
+    background:none; border:none;
+    color:var(--parchment-dim);
+    font-size:22px;
+    cursor:pointer;
+    font-family:var(--sans);
+    line-height:1;
+  }
+  .modal-close:hover{color:var(--gold-bright);}
+  .modal .initial{width:64px;height:64px;font-size:38px;margin-bottom:18px;}
+  .modal h2{
+    font-family:var(--display);
+    font-size:26px;
+    margin:0 0 4px;
+    color:var(--parchment);
+  }
+  .modal .card-tag{font-size:12px;}
+  .modal-section{
+    margin-top:22px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+  }
+  .modal-section h3{
+    font-family:var(--sans);
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    font-size:11px;
+    color:var(--gold-bright);
+    margin:0 0 8px;
+  }
+  .modal-section p{
+    font-size:17px;
+    line-height:1.6;
+    margin:0;
+    color:var(--parchment-dim);
+  }
+  .oracao{
+    font-style:italic;
+    font-size:18px;
+    line-height:1.7;
+    color:var(--parchment);
+    border-left:2px solid var(--gold);
+    padding-left:16px;
+  }
+
+  footer{
+    text-align:center;
+    font-family:var(--sans);
+    font-size:12px;
+    color:rgba(244,236,216,0.4);
+    padding:20px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .card, .card::before{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Devocionário rápido</div>
+  <h1>Santos, Santas &amp; Nossas Senhoras</h1>
+  <p class="subtitle">Origem, padroado, uma curiosidade e uma oração breve — tudo em um toque.</p>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">✦</span>
+    <input id="search" type="text" placeholder="Buscar por nome, padroado ou cidade...">
+  </div>
+  <div class="filters" id="filters">
+    <button class="filter-pill active" data-filter="todos">Todos</button>
+    <button class="filter-pill" data-filter="santo">Santos</button>
+    <button class="filter-pill" data-filter="santa">Santas</button>
+    <button class="filter-pill" data-filter="senhora">Nossas Senhoras</button>
+    <button class="filter-pill" data-filter="beato">Beatos / Veneráveis</button>
+  </div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<footer>Toque em um card para ver detalhes completos · feito com devoção</footer>
+
+<script>
+const dados = [
+  {
+    nome:"Nossa Senhora Aparecida",
+    tipo:"senhora",
+    origem:"Imagem encontrada em 1717 por pescadores no Rio Paraíba do Sul, perto de Guaratinguetá (SP). A pequena imagem de barro, partida em duas, foi encontrada e milagrosamente reunida — episódio que deu início à devoção.",
+    padroeiro:"Padroeira do Brasil",
+    curiosidade:"Sua festa, 12 de outubro, é feriado nacional no Brasil. O Santuário Nacional em Aparecida (SP) é uma das maiores basílicas marianas do mundo.",
+    oracao:"Senhora Aparecida, Mãe do Brasil, cobre com teu manto este nosso povo, guarda nossas famílias e ilumina nosso caminho. Amém."
+  },
+  {
+    nome:"Nossa Senhora de Fátima",
+    tipo:"senhora",
+    origem:"Apareceu a três pastorinhos — Lúcia, Francisco e Jacinta — em Fátima, Portugal, em 1917, pedindo oração do Rosário e penitência pela paz no mundo.",
+    padroeiro:"Padroeira da paz e das famílias",
+    curiosidade:"O 'milagre do sol', em 13 de outubro de 1917, foi testemunhado por milhares de pessoas, incluindo jornalistas céticos.",
+    oracao:"Nossa Senhora de Fátima, rogai por nós, alcançai-nos a paz e a conversão dos corações. Amém."
+  },
+  {
+    nome:"Nossa Senhora de Lourdes",
+    tipo:"senhora",
+    origem:"Apareceu 18 vezes a Bernadette Soubirous, em 1858, na gruta de Massabielle, em Lourdes, França, revelando uma fonte de água que se tornou local de curas.",
+    padroeiro:"Padroeira dos doentes",
+    curiosidade:"Lourdes recebe milhões de peregrinos por ano, muitos em busca de cura física ou espiritual junto à fonte milagrosa.",
+    oracao:"Nossa Senhora de Lourdes, Mãe dos enfermos, intercedei por nós e alcançai saúde para o corpo e a alma. Amém."
+  },
+  {
+    nome:"Nossa Senhora de Guadalupe",
+    tipo:"senhora",
+    origem:"Apareceu ao indígena Juan Diego em 1531, na colina do Tepeyac, no México, deixando sua imagem impressa miraculosamente em um manto de tecido (tilma).",
+    padroeiro:"Padroeira das Américas",
+    curiosidade:"A tilma com a imagem se mantém preservada até hoje, mais de 490 anos depois, sem sinais normais de deterioração do tecido.",
+    oracao:"Nossa Senhora de Guadalupe, Mãe de toda a América, protegei nossos povos e conduzi-nos a Jesus. Amém."
+  },
+  {
+    nome:"São Jorge",
+    tipo:"santo",
+    origem:"Soldado romano do século III, martirizado por se recusar a negar a fé cristã. A lenda do dragão simboliza sua vitória sobre o mal.",
+    padroeiro:"Padroeiro dos soldados, da cavalaria e do Rio de Janeiro",
+    curiosidade:"É muito venerado também nas religiões afro-brasileiras, associado a Ogum, e sua festa em 23 de abril é feriado no Rio de Janeiro.",
+    oracao:"São Jorge, guerreiro de Cristo, dai-nos força e coragem para vencer as batalhas da vida. Amém."
+  },
+  {
+    nome:"Santo Antônio",
+    tipo:"santo",
+    origem:"Nasceu em Lisboa em 1195, frade franciscano conhecido por sua eloquência na pregação e pela devoção encontrada em Pádua, Itália, onde morreu em 1231.",
+    padroeiro:"Padroeiro dos casamentos e das coisas perdidas",
+    curiosidade:"É chamado de 'santo casamenteiro' no Brasil; tradicionalmente solteiras colocam sua imagem de cabeça para baixo pedindo um noivo.",
+    oracao:"Santo Antônio, amigo fiel, ajudai-me a encontrar o que busco e guiai meus passos com sabedoria. Amém."
+  },
+  {
+    nome:"São Francisco de Assis",
+    tipo:"santo",
+    origem:"Nascido em Assis, Itália, em 1182, abandonou riqueza para viver em pobreza radical, fundando a Ordem Franciscana dedicada à simplicidade e ao serviço.",
+    padroeiro:"Padroeiro da ecologia e dos animais",
+    curiosidade:"Foi o primeiro registro de estigmas (marcas da Paixão de Cristo) na história da Igreja, recebidos em 1224.",
+    oracao:"Senhor, fazei de mim um instrumento de vossa paz, onde houver ódio, que eu leve o amor. Amém."
+  },
+  {
+    nome:"São Judas Tadeu",
+    tipo:"santo",
+    origem:"Um dos doze apóstolos de Jesus, pregou o Evangelho na Mesopotâmia e Pérsia, onde foi martirizado.",
+    padroeiro:"Padroeiro das causas urgentes e impossíveis",
+    curiosidade:"Por ter nome parecido com Judas Iscariotes, foi pouco invocado por séculos — hoje é um dos santos mais populares para causas difíceis.",
+    oracao:"São Judas Tadeu, advogado das causas impossíveis, intercedei por mim nesta hora de necessidade. Amém."
+  },
+  {
+    nome:"Santa Rita de Cássia",
+    tipo:"santa",
+    origem:"Nascida em 1381 na Itália, viveu casamento difícil e violento, ficou viúva, e depois entrou no convento agostiniano de Cascia.",
+    padroeiro:"Padroeira das causas impossíveis e dos casamentos difíceis",
+    curiosidade:"É conhecida como 'Santa das Rosas' — reza-se que, ao pedir uma rosa florida fora de estação, recebeu uma do jardim de sua casa natal.",
+    oracao:"Santa Rita, advogada dos casos impossíveis, socorrei-me em minha aflição e alcançai-me a graça que peço. Amém."
+  },
+  {
+    nome:"Santa Teresinha do Menino Jesus",
+    tipo:"santa",
+    origem:"Nascida em 1873 na França, entrou no Carmelo de Lisieux ainda jovem e viveu sua 'pequena via' de santidade através de pequenos gestos de amor.",
+    padroeiro:"Padroeira das missões",
+    curiosidade:"Prometeu 'deixar cair uma chuva de rosas' do céu após sua morte — por isso é tradição receber uma rosa como sinal de sua intercessão.",
+    oracao:"Santa Teresinha, ensinai-me a fazer pequenas coisas com grande amor, e enviai-me uma rosa como sinal. Amém."
+  },
+  {
+    nome:"Santa Bárbara",
+    tipo:"santa",
+    origem:"Mártir do século III, filha de um nobre pagão que a perseguiu por sua conversão ao cristianismo.",
+    padroeiro:"Padroeira dos bombeiros e contra tempestades",
+    curiosidade:"É invocada como proteção contra raios e incêndios, sendo padroeira tradicional dos corpos de bombeiros em vários países.",
+    oracao:"Santa Bárbara, protegei-me das tempestades e perigos do fogo, e guardai minha casa e família. Amém."
+  },
+  {
+    nome:"São Cristóvão",
+    tipo:"santo",
+    origem:"Segundo a tradição, era um homem de grande estatura que carregava viajantes através de um rio — em uma das travessias, carregou o próprio Cristo menino.",
+    padroeiro:"Padroeiro dos motoristas e viajantes",
+    curiosidade:"Seu nome significa 'aquele que carrega Cristo'; por isso motoristas costumam ter sua imagem no painel do carro.",
+    oracao:"São Cristóvão, protetor dos viajantes, guiai meus caminhos e guardai-me de todo perigo nas estradas. Amém."
+  },
+  {
+    nome:"São Miguel Arcanjo",
+    tipo:"santo",
+    origem:"Arcanjo mencionado nas Escrituras como chefe dos exércitos celestiais, vencedor da batalha contra as forças do mal.",
+    padroeiro:"Padroeiro da Igreja e protetor contra o mal",
+    curiosidade:"É invocado na oração de proteção espiritual mais usada na tradição católica contra influências malignas.",
+    oracao:"São Miguel Arcanjo, defendei-nos no combate, sede nosso refúgio contra as ciladas do mal. Amém."
+  },
+  {
+    nome:"Nossa Senhora do Perpétuo Socorro",
+    tipo:"senhora",
+    origem:"Devoção ligada a um ícone bizantino milagroso, hoje guardado em Roma, que retrata Maria apontando para o Menino Jesus enquanto os anjos mostram instrumentos da Paixão.",
+    padroeiro:"Padroeira do socorro nas aflições",
+    curiosidade:"O quadro original tem mais de 500 anos e é venerado na Igreja de Santo Alfonso, em Roma, cuidado pelos Redentoristas.",
+    oracao:"Nossa Senhora do Perpétuo Socorro, acudi-nos sempre em nossas necessidades e aflições. Amém."
+  },
+  {
+    nome:"São Pedro",
+    tipo:"santo",
+    origem:"Pescador da Galileia, um dos doze apóstolos, escolhido por Jesus como o primeiro líder da Igreja ('Tu és Pedro, e sobre esta pedra edificarei minha Igreja').",
+    padroeiro:"Padroeiro dos pescadores e da Igreja",
+    curiosidade:"Foi martirizado em Roma, crucificado de cabeça para baixo a seu próprio pedido, por não se considerar digno de morrer como Jesus.",
+    oracao:"São Pedro, rocha da Igreja, fortalecei minha fé e abri-me as portas da misericórdia de Deus. Amém."
+  },
+  {
+    nome:"Santa Luzia",
+    tipo:"santa",
+    origem:"Mártir do século IV em Siracusa, na Sicília, que teria tido os olhos arrancados por se recusar a negar sua fé.",
+    padroeiro:"Padroeira da visão e dos olhos",
+    curiosidade:"É tradicionalmente invocada para proteção e cura de problemas de visão; seu nome vem de 'luz' (lux).",
+    oracao:"Santa Luzia, dai luz aos meus olhos e clareza ao meu caminho, para que eu veja a vontade de Deus. Amém."
+  },
+  {
+    nome:"São José",
+    tipo:"santo",
+    origem:"Esposo de Maria e pai adotivo de Jesus, carpinteiro de Nazaré, descrito no Evangelho como 'homem justo' que obedeceu aos avisos de Deus em sonhos.",
+    padroeiro:"Padroeiro dos trabalhadores, das famílias e da Igreja universal",
+    curiosidade:"É tradição enterrar uma imagem de São José de cabeça para baixo no jardim ou quintal para ajudar a vender um imóvel mais rápido.",
+    oracao:"São José, protetor das famílias e dos trabalhadores, intercedei por nós e ensinai-nos a confiar na Providência. Amém."
+  },
+  {
+    nome:"Santa Edwiges",
+    tipo:"santa",
+    origem:"Duquesa da Silésia (atual Polônia), nascida em 1174, conhecida por distribuir seus bens aos pobres e fundar hospitais e mosteiros.",
+    padroeiro:"Padroeira dos problemas financeiros e das causas difíceis",
+    curiosidade:"É muito popular no Brasil para pedidos de pagamento de dívidas e estabilidade financeira; sua festa é em 16 de outubro.",
+    oracao:"Santa Edwiges, advogada das causas difíceis, ajudai-me a superar minhas dificuldades financeiras e a confiar na providência divina. Amém."
+  },
+  {
+    nome:"São Geraldo Magela",
+    tipo:"santo",
+    origem:"Redentorista italiano do século XVIII, conhecido como leigo ainda jovem por sua extraordinária caridade e depois como religioso dedicado às missões populares.",
+    padroeiro:"Padroeiro das gestantes e dos partos seguros",
+    curiosidade:"É muito invocado por mulheres grávidas no Brasil; muitas recebem uma pequena imagem dele para guardar durante a gestação.",
+    oracao:"São Geraldo, protetor das gestantes, intercedei por uma gravidez tranquila e um parto seguro. Amém."
+  },
+  {
+    nome:"Santo Expedito",
+    tipo:"santo",
+    origem:"Segundo a tradição, soldado romano martirizado por sua fé; seu nome em latim ('expeditus') remete a urgência e prontidão.",
+    padroeiro:"Padroeiro das causas urgentes",
+    curiosidade:"É tradição agradecer publicamente suas graças, e por isso é comum ver cartazes de gratidão a ele em postes e muros pelo Brasil.",
+    oracao:"Santo Expedito, depressa, depressa, vinde em meu auxílio nesta hora de urgência. Amém."
+  },
+  {
+    nome:"Santa Mônica",
+    tipo:"santa",
+    origem:"Mãe de Santo Agostinho, viveu no norte da África no século IV e dedicou anos de oração e lágrimas pela conversão do filho.",
+    padroeiro:"Padroeira das mães e dos filhos afastados da fé",
+    curiosidade:"É modelo de perseverança na oração: rezou por quase 17 anos até ver a conversão de Santo Agostinho.",
+    oracao:"Santa Mônica, mãe perseverante, intercedei por meus filhos e familiares afastados da fé, para que retornem ao caminho de Deus. Amém."
+  },
+  {
+    nome:"São Vicente de Paulo",
+    tipo:"santo",
+    origem:"Padre francês do século XVII, dedicou a vida ao serviço dos pobres e fundou congregações de caridade.",
+    padroeiro:"Padroeiro das obras de caridade",
+    curiosidade:"Inspirou a criação das Conferências Vicentinas, presentes até hoje em milhares de paróquias ajudando famílias necessitadas.",
+    oracao:"São Vicente de Paulo, ensinai-me a servir aos pobres e necessitados com humildade e amor verdadeiro. Amém."
+  },
+  {
+    nome:"Santa Clara de Assis",
+    tipo:"santa",
+    origem:"Nascida em 1194 em Assis, seguiu o exemplo de São Francisco e fundou a Ordem das Clarissas, vivendo em pobreza e contemplação.",
+    padroeiro:"Padroeira da televisão e das comunicações",
+    curiosidade:"Foi declarada padroeira da televisão por ter tido, segundo a tradição, uma visão da Missa transmitida à distância em seu leito de doente.",
+    oracao:"Santa Clara, luz da pobreza evangélica, ajudai-me a viver com simplicidade e fé profunda. Amém."
+  },
+  {
+    nome:"São Bento",
+    tipo:"santo",
+    origem:"Nascido na Itália em 480, fundou a Ordem Beneditina e escreveu a Regra de São Bento, base da vida monástica ocidental.",
+    padroeiro:"Padroeiro contra o mal e os venenos",
+    curiosidade:"Sua medalha, com a famosa cruz e as iniciais 'CSPB' e 'VRSNSMV', é usada como proteção espiritual contra influências malignas.",
+    oracao:"São Bento, protegei-nos do mal, dai-nos forças contra as tentações e guiai nossos passos na paz de Cristo. Amém."
+  },
+  {
+    nome:"Nossa Senhora das Graças",
+    tipo:"senhora",
+    origem:"Devoção ligada às aparições de Santa Catarina Labouré em Paris, em 1830, quando Maria pediu a cunhagem da 'Medalha Milagrosa' com os raios de graças saindo de suas mãos.",
+    padroeiro:"Padroeira das graças e bênçãos especiais",
+    curiosidade:"A Medalha Milagrosa, criada a partir dessa aparição, é uma das medalhas marianas mais distribuídas no mundo.",
+    oracao:"Ó Maria concebida sem pecado, rogai por nós que recorremos a vós. Derramai sobre nós vossas graças. Amém."
+  },
+  {
+    nome:"Nossa Senhora do Carmo",
+    tipo:"senhora",
+    origem:"Devoção ligada à Ordem dos Carmelitas, no Monte Carmelo, em Israel, com a tradição da entrega do escapulário a São Simão Stock no século XIII.",
+    padroeiro:"Padroeira dos carmelitas e protetora espiritual",
+    curiosidade:"O uso do escapulário do Carmo é tradicionalmente associado à promessa de proteção especial de Maria na hora da morte.",
+    oracao:"Nossa Senhora do Carmo, vesti-nos com o manto de vossa proteção e conduzi-nos ao Coração de Jesus. Amém."
+  },
+  {
+    nome:"São Sebastião",
+    tipo:"santo",
+    origem:"Soldado romano do século III, martirizado a flechadas por ordem do imperador Diocleciano por se recusar a abandonar a fé cristã; sobreviveu às flechas e foi depois martirizado a golpes.",
+    padroeiro:"Padroeiro do Rio de Janeiro e dos soldados",
+    curiosidade:"É invocado tradicionalmente como protetor contra pragas e epidemias; sua festa, 20 de janeiro, é celebrada com grande devoção no Rio de Janeiro.",
+    oracao:"São Sebastião, valente soldado de Cristo, protegei-nos das pragas e perigos, e fortalecei nossa fé. Amém."
+  },
+  {
+    nome:"São Roque",
+    tipo:"santo",
+    origem:"Peregrino francês do século XIV que dedicou a vida a cuidar de doentes de peste, sendo ele mesmo acometido pela doença e curado milagrosamente.",
+    padroeiro:"Padroeiro contra epidemias e dos cães",
+    curiosidade:"É sempre representado com um cão ao lado, que segundo a tradição lhe trazia pão durante seu isolamento na doença.",
+    oracao:"São Roque, protetor contra as doenças, intercedei por nossa saúde e pela cura dos enfermos. Amém."
+  },
+  {
+    nome:"São João Batista",
+    tipo:"santo",
+    origem:"Primo de Jesus, viveu no deserto como pregador e batizou Jesus no rio Jordão, anunciando a chegada do Messias.",
+    padroeiro:"Padroeiro dos batismos e das festas juninas",
+    curiosidade:"Sua festa, em 24 de junho, é uma das mais celebradas no Brasil, com fogueiras, quadrilhas e comidas típicas das festas juninas.",
+    oracao:"São João Batista, precursor de Cristo, ajudai-nos a preparar o caminho do Senhor em nossos corações. Amém."
+  },
+  {
+    nome:"Santa Filomena",
+    tipo:"santa",
+    origem:"Jovem mártir dos primeiros séculos do cristianismo, cujos restos foram encontrados nas catacumbas de Roma em 1802, junto a símbolos que indicavam martírio e virgindade consagrada.",
+    padroeiro:"Padroeira da juventude e das causas difíceis",
+    curiosidade:"É conhecida como 'Santa do impossível', muito popular por inúmeras graças relatadas mesmo sem registros históricos completos sobre sua vida.",
+    oracao:"Santa Filomena, virgem e mártir, intercedei por minhas causas mais difíceis junto a Deus. Amém."
+  },
+  {
+    nome:"Santa Rosa de Lima",
+    tipo:"santa",
+    origem:"Nascida em Lima, Peru, em 1586, dedicou a vida à oração, penitência e cuidado dos pobres e doentes, sendo a primeira santa das Américas.",
+    padroeiro:"Padroeira da América Latina e das Filipinas",
+    curiosidade:"Recebeu o nome 'Rosa' por sua beleza ainda bebê; tornou-se símbolo de santidade leiga e de devoção mística na América colonial.",
+    oracao:"Santa Rosa de Lima, flor de santidade, ensinai-nos a amar a Deus sobre todas as coisas. Amém."
+  },
+  {
+    nome:"São Maximiliano Maria Kolbe",
+    tipo:"santo",
+    origem:"Frade franciscano polonês que, no campo de concentração de Auschwitz em 1941, ofereceu sua vida no lugar de um prisioneiro pai de família.",
+    padroeiro:"Padroeiro das famílias e dos prisioneiros",
+    curiosidade:"Seu gesto de entrega heroica é considerado um dos exemplos mais comoventes de caridade do século XX.",
+    oracao:"São Maximiliano Kolbe, mártir da caridade, ensinai-nos o verdadeiro amor ao próximo, mesmo diante do sacrifício. Amém."
+  },
+  {
+    nome:"São Carlo Acutis",
+    tipo:"santo",
+    origem:"Jovem italiano nascido em Londres em 1991 e criado em Milão, apaixonado por informática desde a infância. Devoto da Eucaristia, criou ainda adolescente um site documentando milagres eucarísticos pelo mundo. Morreu de leucemia fulminante em 2006, aos 15 anos. Foi beatificado em 2020 e canonizado Santo em 7 de setembro de 2025 pelo Papa Leão XIV — o primeiro santo da geração millennial.",
+    padroeiro:"Padroeiro da internet e dos jovens",
+    curiosidade:"Ficou conhecido como o 'influencer de Deus' por usar a tecnologia para evangelizar. Seu corpo é exposto em relicário de vidro em Assis, vestido com roupas casuais (moletom e tênis), como ele gostava de se vestir em vida.",
+    oracao:"São Carlo Acutis, que fizestes da Eucaristia o caminho para o Céu, intercedei pelos jovens e ajudai-nos a usar a tecnologia para o bem. Amém."
+  },
+  {
+    nome:"Frei Galvão",
+    tipo:"santo",
+    origem:"Antônio de Sant'Ana Galvão, frade franciscano nascido em Guaratinguetá (SP) em 1739, conhecido por sua santidade, milagres e pela criação das 'Pílulas de Frei Galvão'.",
+    padroeiro:"Padroeiro das gestantes e primeiro santo nascido no Brasil",
+    curiosidade:"As Pílulas de Frei Galvão, pequenos papéis com a invocação 'Depois do parto, a Virgem Maria permaneceu intacta', são usadas até hoje por gestantes pedindo um parto seguro.",
+    oracao:"Frei Galvão, filho desta terra, intercedei por nossas famílias e protegei as mães e seus filhos. Amém."
+  },
+  {
+    nome:"Santa Dulce dos Pobres (Irmã Dulce)",
+    tipo:"santa",
+    origem:"Freira baiana nascida em Salvador em 1914, fundou obras sociais que se tornaram um dos maiores hospitais filantrópicos do Brasil, dedicando a vida aos pobres e doentes.",
+    padroeiro:"Padroeira dos pobres e dos doentes no Brasil",
+    curiosidade:"Foi a primeira santa nascida no Brasil canonizada já no século XXI, em 2019, sendo carinhosamente chamada de 'Anjo Bom da Bahia'.",
+    oracao:"Santa Dulce dos Pobres, coração cheio de caridade, ensinai-nos a servir aos mais necessitados como Jesus nos pediu. Amém."
+  },
+  {
+    nome:"Santa Madre Paulina",
+    tipo:"santa",
+    origem:"Imigrante italiana radicada no Brasil, fundou em 1890 a Congregação das Pequenas Irmãs da Imaculada Conceição, dedicada ao cuidado de doentes e órfãos.",
+    padroeiro:"Padroeira dos enfermos e das obras de caridade no Brasil",
+    curiosidade:"Foi a primeira santa brasileira canonizada (2002), reconhecida por sua dedicação silenciosa aos mais pobres mesmo em meio a perseguições.",
+    oracao:"Santa Madre Paulina, exemplo de caridade e humildade, intercedei por nós e pelos enfermos que cuidamos. Amém."
+  },
+  {
+    nome:"Padre Cícero",
+    tipo:"santo",
+    beato:true,
+    statusLabel:"Servo de Deus",
+    origem:"Padre nascido em Crato (CE) em 1844, atuou em Juazeiro do Norte e tornou-se uma das figuras de devoção popular mais fortes do Nordeste brasileiro. Importante: ele ainda NÃO é santo canonizado pela Igreja Católica — em 2022 o Vaticano abriu seu processo de beatificação e ele recebeu o título de 'Servo de Deus', primeiro passo do caminho, que ainda depende do reconhecimento de milagres para avançar.",
+    padroeiro:"Devoção popular ligada a Juazeiro do Norte (CE) — ainda sem padroado oficial reconhecido pela Igreja",
+    curiosidade:"Milhões de romeiros visitam Juazeiro do Norte todos os anos para honrar sua memória, em uma das maiores expressões de religiosidade popular do Brasil, mesmo antes do reconhecimento oficial de sua santidade.",
+    oracao:"Servo de Deus Padre Cícero, intercessor do povo sertanejo, rogai a Deus por nossas famílias e por quem sofre. Amém."
+  },
+  {
+    nome:"Nossa Senhora do Rosário",
+    tipo:"senhora",
+    origem:"Devoção ligada à tradição de que Maria entregou o Rosário a São Domingos no século XIII como arma espiritual de oração e conversão.",
+    padroeiro:"Padroeira da oração do Rosário e das missões",
+    curiosidade:"A Igreja celebra a vitória da Batalha de Lepanto (1571) atribuída à intercessão de Nossa Senhora do Rosário, dando origem à festa de 7 de outubro.",
+    oracao:"Nossa Senhora do Rosário, ensinai-nos a rezar com o coração e a confiar sempre na intercessão de Maria. Amém."
+  },
+  {
+    nome:"Imaculada Conceição",
+    tipo:"senhora",
+    origem:"Dogma proclamado pela Igreja em 1854, que afirma que Maria foi concebida sem o pecado original, confirmado depois pelas próprias palavras de Maria a Santa Bernadette em Lourdes, em 1858.",
+    padroeiro:"Padroeira de diversos países e dioceses",
+    curiosidade:"A Medalha Milagrosa, criada a partir das aparições a Santa Catarina Labouré, traz justamente os dizeres 'Ó Maria, concebida sem pecado'.",
+    oracao:"Ó Maria concebida sem pecado, rogai por nós que recorremos a vós. Amém."
+  },
+  {
+    nome:"Sagrado Coração de Jesus",
+    tipo:"santo",
+    origem:"Devoção baseada nas revelações de Jesus a Santa Margarida Maria Alacoque, na França, no século XVII, mostrando seu Coração como símbolo de amor infinito pela humanidade.",
+    padroeiro:"Devoção universal ao amor de Cristo",
+    curiosidade:"É comum encontrar a imagem do Sagrado Coração entronizada nos lares católicos, em uma tradição chamada 'Entronização do Sagrado Coração'.",
+    oracao:"Coração Sagrado de Jesus, em Vós ponho toda minha confiança; que nada me falte, que tudo em mim seja amor. Amém."
+  },
+  {
+    nome:"Maria Auxiliadora",
+    tipo:"senhora",
+    origem:"Título dado a Maria por São João Bosco em Turim, no século XIX, em agradecimento à proteção recebida na fundação de suas obras educativas para jovens.",
+    padroeiro:"Padroeira dos salesianos e da juventude",
+    curiosidade:"É invocada como auxílio em momentos de dificuldade extrema, sendo padroeira de diversas instituições educacionais salesianas pelo mundo.",
+    oracao:"Maria Auxiliadora, socorrei-nos em nossas necessidades e guiai os jovens pelo caminho do bem. Amém."
+  },
+  {
+    nome:"Santa Teresa de Ávila",
+    tipo:"santa",
+    origem:"Nascida na Espanha em 1515, reformou a Ordem Carmelita e é uma das maiores místicas da Igreja, autora de obras espirituais como 'Castelo Interior'.",
+    padroeiro:"Padroeira dos escritores espirituais e da Espanha",
+    curiosidade:"Foi declarada Doutora da Igreja em 1970, sendo uma das primeiras mulheres a receber esse título.",
+    oracao:"Santa Teresa de Ávila, ensinai-me a buscar a Deus com todo o coração e a perseverar na oração. Amém."
+  },
+  {
+    nome:"São Domingos de Gusmão",
+    tipo:"santo",
+    origem:"Sacerdote espanhol nascido em 1170, fundou a Ordem dos Dominicanos e, segundo a tradição, recebeu de Maria o Rosário como instrumento de evangelização.",
+    padroeiro:"Padroeiro dos pregadores e da oração do Rosário",
+    curiosidade:"Sua ordem foi fundamental no combate às heresias da época através da pregação e do estudo, e ainda hoje é referência intelectual na Igreja.",
+    oracao:"São Domingos de Gusmão, pregador da verdade, ajudai-nos a anunciar o Evangelho com coragem e amor. Amém."
+  },
+  {
+    nome:"São Luís Gonzaga",
+    tipo:"santo",
+    origem:"Jovem nobre italiano do século XVI que renunciou a privilégios da nobreza para se tornar jesuíta, morrendo aos 23 anos ao cuidar de doentes durante uma epidemia.",
+    padroeiro:"Padroeiro da juventude católica",
+    curiosidade:"É um dos santos mais associados à pureza e dedicação na juventude, sendo modelo para grupos de jovens católicos no mundo todo.",
+    oracao:"São Luís Gonzaga, modelo de pureza e generosidade, intercedei pelos jovens em seu caminho de fé. Amém."
+  },
+  {
+    nome:"São Francisco Xavier",
+    tipo:"santo",
+    origem:"Jesuíta espanhol do século XVI, um dos primeiros companheiros de Santo Inácio de Loyola, dedicou a vida às missões na Índia, Japão e Sudeste Asiático.",
+    padroeiro:"Padroeiro das missões",
+    curiosidade:"É considerado um dos maiores missionários da história da Igreja, percorrendo milhares de quilômetros para evangelizar povos distantes.",
+    oracao:"São Francisco Xavier, apóstolo das missões, dai-nos zelo e coragem para anunciar a fé onde quer que estejamos. Amém."
+  },
+  {
+    nome:"São João Maria Vianney",
+    tipo:"santo",
+    origem:"Padre francês do século XIX, conhecido como 'Cura de Ars', célebre por sua simplicidade, intensa vida de oração e dedicação ao confessionário.",
+    padroeiro:"Padroeiro dos padres e párocos",
+    curiosidade:"Chegou a passar até 16 horas por dia no confessionário, atendendo peregrinos que vinham de toda a França buscando seu conselho espiritual.",
+    oracao:"São João Maria Vianney, exemplo de padres santos, intercedei por nossos sacerdotes e por nossas paróquias. Amém."
+  },
+  {
+    nome:"Dom Bosco",
+    tipo:"santo",
+    origem:"Padre italiano nascido em 1815, dedicou a vida à educação de jovens pobres e abandonados, fundando a Congregação Salesiana.",
+    padroeiro:"Padroeiro dos educadores e da juventude",
+    curiosidade:"Teve uma visão profética sobre uma grande cidade que se desenvolveria 'entre dois braços de rio' nos trópicos — tradicionalmente associada a Brasília.",
+    oracao:"Dom Bosco, pai e mestre da juventude, intercedei pelos jovens e por todos que se dedicam à educação. Amém."
+  },
+  {
+    nome:"Santa Verônica",
+    tipo:"santa",
+    origem:"Segundo a tradição, uma mulher de Jerusalém que enxugou o rosto de Jesus a caminho do Calvário, ficando a imagem milagrosamente impressa no tecido.",
+    padroeiro:"Padroeira dos fotógrafos",
+    curiosidade:"O episódio de Santa Verônica é representado na sexta estação da Via-Sacra, rezada tradicionalmente na Quaresma.",
+    oracao:"Santa Verônica, que enxugastes o rosto de Jesus, ajudai-nos a reconhecer Cristo no rosto de quem sofre. Amém."
+  },
+  {
+    nome:"São Francisco de Sales",
+    tipo:"santo",
+    origem:"Bispo francês do século XVII, conhecido por sua doçura no trato pastoral e por escritos espirituais voltados aos leigos, como 'Introdução à Vida Devota'.",
+    padroeiro:"Padroeiro dos jornalistas e escritores",
+    curiosidade:"Defendia que a santidade não é só para religiosos enclausurados, mas possível em qualquer profissão e estado de vida.",
+    oracao:"São Francisco de Sales, mestre da doçura cristã, ensinai-nos a viver a fé com paz e bondade no dia a dia. Amém."
+  },
+  {
+    nome:"Santa Maria Goretti",
+    tipo:"santa",
+    origem:"Jovem italiana nascida em 1890, morta aos 11 anos ao resistir a um ataque, perdoando seu agressor antes de morrer.",
+    padroeiro:"Padroeira das vítimas de abuso e dos jovens",
+    curiosidade:"É uma das mais jovens santas canonizadas da Igreja, tornando-se símbolo de perdão e pureza para a juventude católica.",
+    oracao:"Santa Maria Goretti, exemplo de perdão e pureza, intercedei pelos jovens e pelas vítimas de violência. Amém."
+  },
+  {
+    nome:"Nossa Senhora da Salete",
+    tipo:"senhora",
+    origem:"Apareceu a dois pastorinhos, Maximino e Melânia, em La Salette, França, em 1846, chorando e pedindo conversão e oração ao povo.",
+    padroeiro:"Padroeira da reconciliação",
+    curiosidade:"É uma das aparições marianas marcadas por um tom mais severo de advertência, pedindo penitência diante do afastamento da fé.",
+    oracao:"Nossa Senhora da Salete, Mãe Reconciliadora, ajudai-nos a converter o coração e voltar sempre a Deus. Amém."
+  },
+  {
+    nome:"Nossa Senhora de Loreto",
+    tipo:"senhora",
+    origem:"Devoção ligada à Santa Casa de Loreto, na Itália, tradicionalmente identificada como a casa de Maria em Nazaré, transportada e preservada como santuário.",
+    padroeiro:"Padroeira da aviação",
+    curiosidade:"É invocada como protetora de aviadores e de quem viaja pelos ares, por conta da tradição do 'transporte' milagroso da Santa Casa.",
+    oracao:"Nossa Senhora de Loreto, protegei nossas viagens e conduzi-nos sempre com segurança ao nosso destino. Amém."
+  },
+  {
+    nome:"Santo Agostinho",
+    tipo:"santo",
+    origem:"Nascido em 354 no norte da África, viveu anos afastado da fé até se converter após anos de busca intelectual, tornando-se bispo de Hipona e um dos maiores pensadores da Igreja.",
+    padroeiro:"Padroeiro dos teólogos e impressores",
+    curiosidade:"É autor de 'Confissões', uma das obras mais influentes da literatura cristã, onde narra sua conversão e a frase célebre 'tarde te amei, ó Beleza'.",
+    oracao:"Santo Agostinho, que buscastes a verdade com todo o coração, ajudai-nos a encontrar Deus em nossa própria busca. Amém."
+  },
+  {
+    nome:"Santa Águeda",
+    tipo:"santa",
+    origem:"Jovem mártir da Sicília, no século III, que sofreu torturas, incluindo a mutilação dos seios, por se recusar a negar sua fé e seu voto de virgindade.",
+    padroeiro:"Padroeira contra doenças da mama",
+    curiosidade:"É tradicionalmente invocada para proteção contra o câncer de mama, com bênçãos especiais realizadas em sua festa, 5 de fevereiro.",
+    oracao:"Santa Águeda, fortaleza na dor, intercedei pela saúde e proteção de todas as mulheres. Amém."
+  },
+  {
+    nome:"Santa Ângela de Mérici",
+    tipo:"santa",
+    origem:"Nascida na Itália em 1474, fundou a Companhia de Santa Úrsula, dedicada à educação cristã de jovens mulheres, num tempo em que pouquíssimas tinham acesso ao ensino.",
+    padroeiro:"Padroeira das educadoras",
+    curiosidade:"Sua obra deu origem às Ursulinas, uma das primeiras congregações femininas dedicadas especificamente à educação no mundo.",
+    oracao:"Santa Ângela de Mérici, dedicada à formação dos jovens, intercedei pelas educadoras e por quem se dedica ao ensino. Amém."
+  },
+  {
+    nome:"Santos Anjos da Guarda",
+    tipo:"santo",
+    origem:"Crença cristã, fundamentada nas Escrituras, de que Deus designa um anjo para proteger e guiar cada pessoa ao longo da vida.",
+    padroeiro:"Proteção espiritual pessoal",
+    curiosidade:"A oração ao Anjo da Guarda é uma das primeiras orações ensinadas às crianças na tradição católica.",
+    oracao:"Anjo de Deus, que sois meu guarda, iluminai-me, guardai-me, regei-me e governai-me. Amém."
+  },
+  {
+    nome:"Arcanjos São Miguel, São Gabriel e São Rafael",
+    tipo:"santo",
+    origem:"Os três arcanjos mencionados nas Escrituras: Miguel como guerreiro celestial, Gabriel como mensageiro (anunciou o nascimento de Jesus a Maria) e Rafael como cura (curou Tobias).",
+    padroeiro:"Padroeiros da proteção, das comunicações e da cura",
+    curiosidade:"São celebrados juntos em uma única festa, 29 de setembro, reunindo as três funções centrais dos anjos na tradição bíblica: proteger, anunciar e curar.",
+    oracao:"Santos Arcanjos Miguel, Gabriel e Rafael, protegei-nos, iluminai nossos caminhos e curai nossas feridas. Amém."
+  },
+  {
+    nome:"São Bartolomeu",
+    tipo:"santo",
+    origem:"Um dos doze apóstolos de Jesus, segundo a tradição pregou o Evangelho na Armênia e na Índia, sendo martirizado por esfolamento.",
+    padroeiro:"Padroeiro dos curtidores e açougueiros",
+    curiosidade:"É frequentemente representado em obras de arte segurando sua própria pele, referência ao tipo de martírio que sofreu.",
+    oracao:"São Bartolomeu, apóstolo fiel até o martírio, dai-nos firmeza para testemunhar nossa fé. Amém."
+  },
+  {
+    nome:"São Benedito",
+    tipo:"santo",
+    origem:"Frade franciscano italiano do século XVI, filho de escravizados, tornou-se cozinheiro do convento e viveu com profunda humildade e caridade, sendo muito venerado por escravizados no Brasil colonial.",
+    padroeiro:"Padroeiro dos afrodescendentes e cozinheiros",
+    curiosidade:"É um dos santos mais cultuados no Brasil em devoções populares de matriz afro-católica, com festas tradicionais em diversas regiões.",
+    oracao:"São Benedito, humilde servo de Deus, intercedei por nós e dai-nos a graça da simplicidade e da caridade. Amém."
+  },
+  {
+    nome:"Santa Bernadette",
+    tipo:"santa",
+    origem:"Jovem francesa que, em 1858, recebeu 18 aparições de Nossa Senhora na gruta de Lourdes, vivendo depois como religiosa em humildade até sua morte.",
+    padroeiro:"Padroeira dos doentes e pastores",
+    curiosidade:"Seu corpo permanece incorrupto até hoje, exposto em um relicário na capela do convento de Nevers, na França.",
+    oracao:"Santa Bernadette, que vistes a Mãe de Deus, ajudai-nos a acreditar mesmo sem ver, e a viver com simplicidade. Amém."
+  },
+  {
+    nome:"São Bernardo de Claraval",
+    tipo:"santo",
+    origem:"Monge francês do século XII, fundou a abadia de Claraval e foi grande reformador da Ordem Cisterciense, sendo também notável pregador e místico mariano.",
+    padroeiro:"Padroeiro dos apicultores e da Borgonha",
+    curiosidade:"É conhecido como 'Doutor Mariano' pela profundidade de seus escritos sobre a devoção a Nossa Senhora.",
+    oracao:"São Bernardo de Claraval, devoto fiel de Maria, ensinai-nos a amá-la como verdadeira Mãe. Amém."
+  },
+  {
+    nome:"São Camilo de Léllis",
+    tipo:"santo",
+    origem:"Ex-soldado italiano do século XVI que, após se converter, dedicou a vida ao cuidado de doentes, fundando a Ordem dos Camilianos para servir em hospitais.",
+    padroeiro:"Padroeiro dos hospitais e enfermeiros",
+    curiosidade:"É considerado o pioneiro da humanização do cuidado hospitalar, insistindo em tratar os doentes com dignidade e amor.",
+    oracao:"São Camilo de Léllis, protetor dos enfermos, intercedei pelos profissionais de saúde e pelos que sofrem doença. Amém."
+  },
+  {
+    nome:"São Carlos Borromeu",
+    tipo:"santo",
+    origem:"Cardeal italiano do século XVI, arcebispo de Milão, dedicou-se à reforma da Igreja após o Concílio de Trento e ao cuidado dos pobres durante epidemias de peste.",
+    padroeiro:"Padroeiro dos bispos e catequistas",
+    curiosidade:"Arriscou a própria vida visitando pessoalmente doentes de peste em Milão, quando muitos líderes fugiam das cidades afetadas.",
+    oracao:"São Carlos Borromeu, exemplo de zelo pastoral, intercedei por nossos bispos e pela renovação da Igreja. Amém."
+  },
+  {
+    nome:"Santa Catarina de Sena",
+    tipo:"santa",
+    origem:"Mística italiana do século XIV, dedicou a vida à oração e à caridade, exercendo grande influência junto a papas de sua época para a reforma da Igreja.",
+    padroeiro:"Padroeira da Itália e Doutora da Igreja",
+    curiosidade:"Foi uma das duas primeiras mulheres declaradas Doutoras da Igreja, ao lado de Santa Teresa de Ávila.",
+    oracao:"Santa Catarina de Sena, coração ardente de amor por Cristo e pela Igreja, intercedei por nós. Amém."
+  },
+  {
+    nome:"Santa Cecília",
+    tipo:"santa",
+    origem:"Jovem romana mártir dos primeiros séculos do cristianismo, segundo a tradição cantava hinos a Deus mesmo durante seu martírio.",
+    padroeiro:"Padroeira dos músicos",
+    curiosidade:"É a padroeira universal da música sacra, com coros e orquestras celebrando sua festa em 22 de novembro.",
+    oracao:"Santa Cecília, que louvastes a Deus com cantos, inspirai os músicos a usarem seus dons para a glória de Deus. Amém."
+  },
+  {
+    nome:"São Cosme e Damião",
+    tipo:"santo",
+    origem:"Irmãos gêmeos médicos do século III, conhecidos por tratar gratuitamente os doentes, sendo martirizados por sua fé cristã.",
+    padroeiro:"Padroeiros dos médicos e das crianças",
+    curiosidade:"No Brasil, é tradição distribuir doces às crianças em sua festa, 27 de setembro, em uma das devoções mais populares do país.",
+    oracao:"São Cosme e São Damião, protetores das crianças, intercedei pela saúde e alegria de todos os pequenos. Amém."
+  },
+  {
+    nome:"Cristo Redentor",
+    tipo:"santo",
+    origem:"Não é um santo, mas uma das mais célebres representações de Jesus Cristo, o monumento erguido no Morro do Corcovado, no Rio de Janeiro, inaugurado em 1931.",
+    padroeiro:"Símbolo de fé e acolhida do Brasil ao mundo",
+    curiosidade:"É uma das Sete Maravilhas do Mundo Moderno e um dos cartões-postais mais reconhecidos do planeta.",
+    oracao:"Senhor Jesus, com os braços abertos do Cristo Redentor, acolhei e bendizei o povo brasileiro. Amém."
+  },
+  {
+    nome:"Divino Espírito Santo",
+    tipo:"santo",
+    origem:"A terceira Pessoa da Santíssima Trindade, manifestado de modo especial em Pentecostes, quando desceu sobre os apóstolos em forma de línguas de fogo.",
+    padroeiro:"Devoção universal, padroeiro de festas do Divino no interior do Brasil",
+    curiosidade:"As Festas do Divino Espírito Santo, com coroação de impérios e distribuição de comida, são tradição centenária em várias cidades brasileiras.",
+    oracao:"Vem, Espírito Santo, enchei os corações dos vossos fiéis e acendei neles o fogo do vosso amor. Amém."
+  },
+  {
+    nome:"Divino Pai Eterno",
+    tipo:"santo",
+    origem:"Devoção a Deus Pai, especialmente forte em Trindade (GO), onde uma imagem encontrada no século XIX deu origem a um dos maiores santuários do Brasil.",
+    padroeiro:"Padroeiro do santuário de Trindade (GO)",
+    curiosidade:"A romaria ao Divino Pai Eterno em Trindade é uma das maiores peregrinações católicas do Brasil, reunindo milhões de devotos.",
+    oracao:"Divino Pai Eterno, recebei nossas súplicas e cobre-nos com vossa proteção e misericórdia. Amém."
+  },
+  {
+    nome:"Santo Estêvão",
+    tipo:"santo",
+    origem:"Primeiro diácono e primeiro mártir cristão, apedrejado em Jerusalém por anunciar a fé em Jesus, conforme narrado no livro dos Atos dos Apóstolos.",
+    padroeiro:"Padroeiro dos diáconos e coveiros",
+    curiosidade:"Antes de morrer, perdoou seus agressores, em um gesto que ecoa o perdão de Jesus na cruz.",
+    oracao:"Santo Estêvão, primeiro mártir, dai-nos a graça de perdoar como vós perdoastes. Amém."
+  },
+  {
+    nome:"Sagrada Família",
+    tipo:"santo",
+    origem:"Devoção a Jesus, Maria e José vivendo juntos em Nazaré, tomados como modelo de vida familiar cristã, simples e dedicada.",
+    padroeiro:"Padroeira das famílias",
+    curiosidade:"A festa da Sagrada Família é celebrada no domingo após o Natal, lembrando a importância da união familiar.",
+    oracao:"Sagrada Família de Nazaré, fazei de nossas famílias verdadeiros santuários de amor, fé e paz. Amém."
+  },
+  {
+    nome:"Santo Inácio de Loyola",
+    tipo:"santo",
+    origem:"Nobre espanhol que, após se converter durante uma convalescença de guerra no século XVI, fundou a Companhia de Jesus (jesuítas), dedicada à formação e às missões.",
+    padroeiro:"Padroeiro dos jesuítas e dos retiros espirituais",
+    curiosidade:"Criou os 'Exercícios Espirituais', um método de oração e discernimento ainda usado em retiros espirituais no mundo todo.",
+    oracao:"Santo Inácio de Loyola, ensinai-nos a buscar e fazer em tudo a vontade de Deus. Amém."
+  },
+  {
+    nome:"Santo Isidoro Lavrador",
+    tipo:"santo",
+    origem:"Camponês espanhol do século XII, conhecido por sua vida simples de trabalho na lavoura unida à intensa oração diária.",
+    padroeiro:"Padroeiro dos agricultores",
+    curiosidade:"É um dos santos mais invocados nas zonas rurais por boas colheitas e proteção do trabalho no campo.",
+    oracao:"Santo Isidoro Lavrador, intercedei pelos agricultores e por todo trabalho feito com a terra. Amém."
+  },
+  {
+    nome:"São Jerônimo",
+    tipo:"santo",
+    origem:"Padre e estudioso do século IV, responsável pela tradução da Bíblia para o latim (a Vulgata), texto que se tornou referência oficial da Igreja por séculos.",
+    padroeiro:"Padroeiro dos tradutores e bibliotecários",
+    curiosidade:"Viveu anos como eremita no deserto antes de se dedicar à tradução bíblica, sendo considerado Doutor da Igreja.",
+    oracao:"São Jerônimo, amante da Palavra de Deus, ajudai-nos a conhecer e amar as Sagradas Escrituras. Amém."
+  },
+  {
+    nome:"São João Evangelista",
+    tipo:"santo",
+    origem:"Um dos doze apóstolos, autor do quarto Evangelho e do livro do Apocalipse, conhecido como 'o discípulo que Jesus amava'.",
+    padroeiro:"Padroeiro dos escritores e teólogos",
+    curiosidade:"Foi o único apóstolo que, segundo a tradição, não morreu como mártir, vivendo até idade avançada em Éfeso.",
+    oracao:"São João Evangelista, que repousastes no Coração de Jesus, ensinai-nos a amar como Ele nos amou. Amém."
+  },
+  {
+    nome:"São José de Anchieta",
+    tipo:"santo",
+    origem:"Jesuíta espanhol que veio para o Brasil colonial no século XVI, dedicou-se à catequese dos povos indígenas e é considerado um dos fundadores da cidade de São Paulo.",
+    padroeiro:"Padroeiro do Brasil e dos catequistas",
+    curiosidade:"Compôs poemas e textos em tupi-guarani para ensinar a fé, sendo também figura central na literatura colonial brasileira.",
+    oracao:"São José de Anchieta, apóstolo do Brasil, intercedei pela evangelização e pela educação de nosso povo. Amém."
+  },
+  {
+    nome:"João Paulo II",
+    tipo:"santo",
+    origem:"Karol Wojtyła, papa polonês eleito em 1978, um dos pontificados mais longos da história, marcado por viagens missionárias e papel na queda do comunismo no Leste Europeu.",
+    padroeiro:"Devoção universal contemporânea",
+    curiosidade:"Visitou mais de 120 países durante seu pontificado, incluindo o Brasil em diversas ocasiões, sendo chamado de 'papa peregrino'.",
+    oracao:"São João Paulo II, que nos ensinastes a 'não ter medo', intercedei por nossa fé e por nossa esperança. Amém."
+  },
+  {
+    nome:"Madre Tereza de Calcutá",
+    tipo:"santa",
+    origem:"Religiosa albanesa que dedicou a vida aos mais pobres entre os pobres em Calcutá, na Índia, fundando as Missionárias da Caridade em 1950.",
+    padroeiro:"Padroeira da caridade aos moribundos e desamparados",
+    curiosidade:"Recebeu o Premio Nobel da Paz em 1979 e é uma das figuras de caridade mais reconhecidas do século XX em todo o mundo.",
+    oracao:"Madre Tereza de Calcutá, coração dedicado aos pobres, ensinai-nos a ver Cristo em cada pessoa que sofre. Amém."
+  },
+  {
+    nome:"São Lázaro",
+    tipo:"santo",
+    origem:"Amigo de Jesus, irmão de Marta e Maria de Betânia, ressuscitado por Jesus quatro dias após sua morte, um dos milagres mais marcantes do Evangelho.",
+    padroeiro:"Padroeiro dos enfermos e leprosos",
+    curiosidade:"O episódio de sua ressurreição é narrado no Evangelho de João e é tradicionalmente lido como sinal da vitória de Cristo sobre a morte.",
+    oracao:"São Lázaro, que voltastes à vida pelo poder de Cristo, intercedei pelos doentes e por todos que perderam a esperança. Amém."
+  },
+  {
+    nome:"São Leão Magno",
+    tipo:"santo",
+    origem:"Papa do século V, defendeu com firmeza a doutrina da Igreja diante de heresias da época e teria persuadido Átila, o huno, a não invadir Roma.",
+    padroeiro:"Padroeiro dos diplomatas e mediadores",
+    curiosidade:"É considerado um dos papas mais influentes da Antiguidade tardia, sendo declarado Doutor da Igreja por sua atuação teológica.",
+    oracao:"São Leão Magno, defensor da verdade e da paz, intercedei pela unidade da Igreja. Amém."
+  },
+  {
+    nome:"São Longuinho",
+    tipo:"santo",
+    origem:"Segundo a tradição popular, o soldado romano que perfurou o lado de Jesus na cruz com uma lança e, ao ver o milagre que se seguiu, se converteu.",
+    padroeiro:"Padroeiro de quem perdeu algo",
+    curiosidade:"É um dos santos mais populares no Brasil para pedir ajuda a encontrar objetos perdidos, com a reza tradicional 'Santo Longuinho, Santo Longuinho...'.",
+    oracao:"Santo Longuinho, Santo Longuinho, eu já procurei e não achei; ajudai-me a achar o que perdi. Amém."
+  },
+  {
+    nome:"São Lucas",
+    tipo:"santo",
+    origem:"Médico e evangelista do século I, autor do terceiro Evangelho e do livro de Atos dos Apóstolos, companheiro de viagens missionárias de São Paulo.",
+    padroeiro:"Padroeiro dos médicos e artistas",
+    curiosidade:"É também tradicionalmente associado à pintura, havendo lendas que o apontam como autor de retratos de Maria.",
+    oracao:"São Lucas evangelista, que nos relatastes a misericórdia de Cristo, intercedei pelos médicos e por quem cuida da saúde. Amém."
+  },
+  {
+    nome:"São Marcos Evangelista",
+    tipo:"santo",
+    origem:"Autor do segundo Evangelho, considerado o mais antigo dos quatro, discípulo de São Pedro e fundador da Igreja de Alexandria, no Egito.",
+    padroeiro:"Padroeiro de Veneza e dos notários",
+    curiosidade:"Seu símbolo tradicional é o leão alado, presente até hoje no brasão da cidade de Veneza, onde suas relíquias são veneradas.",
+    oracao:"São Marcos evangelista, intercedei para que vivamos o Evangelho com simplicidade e fé verdadeira. Amém."
+  },
+  {
+    nome:"Papa Francisco",
+    tipo:"santo",
+    origem:"Jorge Mario Bergoglio, primeiro papa latino-americano da história, eleito em 2013, conhecido por sua simplicidade e atenção aos pobres e às causas sociais.",
+    padroeiro:"Magistério recente da Igreja",
+    curiosidade:"Escolheu o nome 'Francisco' em homenagem a São Francisco de Assis, simbolizando seu compromisso com a pobreza e a ecologia.",
+    oracao:"Senhor, inspirados pelo testemunho do Papa Francisco, ajudai-nos a cuidar dos pobres e da nossa casa comum. Amém."
+  },
+  {
+    nome:"São Paulo",
+    tipo:"santo",
+    origem:"Antigo perseguidor dos cristãos, convertido após uma visão de Jesus no caminho de Damasco, tornou-se o maior missionário do cristianismo primitivo, autor de boa parte das cartas do Novo Testamento.",
+    padroeiro:"Padroeiro dos missionários e evangelizadores",
+    curiosidade:"Fundou comunidades cristãs em diversas cidades do Império Romano, sendo martirizado em Roma junto com São Pedro.",
+    oracao:"São Paulo, convertido pela graça de Cristo, dai-nos zelo para anunciar o Evangelho com nossa própria vida. Amém."
+  },
+  {
+    nome:"Santas Perpétua e Felicidade",
+    tipo:"santa",
+    origem:"Mártires do norte da África no século III, mortas na arena por se recusarem a renunciar à fé cristã, mesmo Perpétua sendo jovem mãe e Felicidade gestante.",
+    padroeiro:"Padroeiras das gestantes em perigo",
+    curiosidade:"O relato do martírio de Perpétua, escrito por ela mesma na prisão, é um dos primeiros textos autobiográficos cristãos conhecidos.",
+    oracao:"Santas Perpétua e Felicidade, fortes na fé até o fim, intercedei pelas mães e por quem sofre perseguição. Amém."
+  },
+  {
+    nome:"Padre Pio de Pietrelcina",
+    tipo:"santo",
+    origem:"Frade franciscano italiano do século XX, conhecido por receber os estigmas da Paixão de Cristo e por horas dedicadas ao confessionário e à oração.",
+    padroeiro:"Padroeiro dos confessores",
+    curiosidade:"É um dos santos contemporâneos mais venerados no mundo, com relatos de dons místicos como leitura de almas e bilocação.",
+    oracao:"Padre Pio de Pietrelcina, que sofrestes unido à Paixão de Cristo, intercedei por nossa conversão e cura. Amém."
+  },
+  {
+    nome:"Santo Pio X",
+    tipo:"santo",
+    origem:"Papa italiano do início do século XX, conhecido por incentivar a comunhão frequente, inclusive entre crianças, e por reformas na liturgia e catecismo.",
+    padroeiro:"Padroeiro dos catequistas",
+    curiosidade:"Reduziu a idade mínima para a Primeira Comunhão, tornando o sacramento mais acessível às crianças em toda a Igreja.",
+    oracao:"Santo Pio X, zeloso da Eucaristia, intercedei para que amemos cada vez mais a presença de Jesus no altar. Amém."
+  },
+  {
+    nome:"São Tiago",
+    tipo:"santo",
+    origem:"Um dos doze apóstolos, irmão de São João, pregou o Evangelho na Espanha segundo a tradição, sendo o primeiro apóstolo martirizado.",
+    padroeiro:"Padroeiro da Espanha e dos peregrinos",
+    curiosidade:"O Caminho de Santiago de Compostela, uma das peregrinações mais famosas do mundo, leva até seu túmulo na Espanha.",
+    oracao:"São Tiago apóstolo, guia dos peregrinos, acompanhai-nos em nossa caminhada de fé. Amém."
+  },
+  {
+    nome:"São Tomé Apóstolo",
+    tipo:"santo",
+    origem:"Um dos doze apóstolos, conhecido por duvidar da ressurreição de Jesus até tocar suas feridas, e por levar o Evangelho até a Índia, segundo a tradição.",
+    padroeiro:"Padroeiro dos arquitetos e construtores",
+    curiosidade:"A expressão 'são tomé, duvidoso' vem justamente de sua hesitação inicial em crer na ressurreição de Cristo.",
+    oracao:"São Tomé apóstolo, que crestes ao tocar as chagas de Cristo, fortalecei nossa fé nos momentos de dúvida. Amém."
+  },
+  {
+    nome:"Todos os Santos",
+    tipo:"santo",
+    origem:"Solenidade que celebra, em conjunto, todos os santos conhecidos e desconhecidos da história da Igreja que já alcançaram a vida eterna junto a Deus.",
+    padroeiro:"Celebração de toda a Igreja triunfante",
+    curiosidade:"É celebrada em 1º de novembro, anteriormente seguida do Dia de Todos os Fiéis Defuntos, em 2 de novembro.",
+    oracao:"Todos os Santos do Céu, rogai por nós, e ajudai-nos a viver hoje a santidade que vocês já alcançaram. Amém."
+  },
+  {
+    nome:"São Vicente Ferrer",
+    tipo:"santo",
+    origem:"Frade dominicano espanhol do século XIV e XV, célebre pregador itinerante que percorreu a Europa anunciando a conversão e a penitência.",
+    padroeiro:"Padroeiro dos pregadores e construtores",
+    curiosidade:"É lembrado por seus sermões impressionantes, que reuniam multidões e teriam motivado conversões em massa por onde passava.",
+    oracao:"São Vicente Ferrer, voz que chamou ao arrependimento, intercedei por nossa conversão sincera. Amém."
+  },
+  {
+    nome:"Nossa Senhora da Visitação",
+    tipo:"senhora",
+    origem:"Celebra o encontro de Maria, grávida de Jesus, com sua prima Isabel, grávida de João Batista, narrado no Evangelho de Lucas.",
+    padroeiro:"Padroeira do acolhimento e da partilha",
+    curiosidade:"Desse encontro nasce a oração do 'Magnificat', cântico de louvor de Maria que a Igreja reza até hoje na liturgia das horas.",
+    oracao:"Nossa Senhora da Visitação, que levastes Jesus a quem precisava, ensinai-nos a levar Cristo a quem encontramos. Amém."
+  },
+  {nome:"Nossa Senhora Abadia", tipo:"senhora", origem:"Título mariano de origem espanhola/portuguesa, ligado a santuários situados junto a abadias monásticas.", padroeiro:"Padroeira de comunidades monásticas locais."},
+  {nome:"Santa Adelaide", tipo:"santa", origem:"Imperatriz do Sacro Império Romano-Germânico no século X, conhecida por sua piedade e obras de caridade após enfrentar perseguições políticas.", padroeiro:"Padroeira de viúvas e rainhas."},
+  {nome:"Santo Adriano", tipo:"santo", origem:"Mártir romano do século III ou IV, soldado convertido ao cristianismo, venerado especialmente em tradições da Europa Central.", padroeiro:"Padroeiro de soldados e açougueiros."},
+  {nome:"Nossa Senhora dos Aflitos", tipo:"senhora", origem:"Devoção popular voltada a Maria como consoladora de quem sofre aflições físicas, morais ou espirituais.", padroeiro:"Padroeira de quem atravessa aflições e dificuldades."},
+  {nome:"São Afonso", tipo:"santo", origem:"Nome de diversos santos ao longo da tradição católica, com destaque para Santo Afonso Maria de Ligório, fundador dos Redentoristas.", padroeiro:"Padroeiro de confessores e moralistas."},
+  {nome:"Santo Afonso Rodrigues", tipo:"santo", origem:"Irmão jesuíta espanhol do século XVI e XVII, porteiro do colégio de Maiorca, reconhecido por sua simplicidade e vida de oração constante.", padroeiro:"Padroeiro dos porteiros e zeladores."},
+  {nome:"Santa Afra", tipo:"santa", origem:"Mártir do século III ou IV na região da atual Alemanha, convertida ao cristianismo e martirizada por sua fé.", padroeiro:"Padroeira de Augsburgo, na Alemanha."},
+  {nome:"Nossa Senhora da Agonia", tipo:"senhora", origem:"Devoção portuguesa a Maria associada à agonia de Cristo na cruz, com festas tradicionais especialmente em Viana do Castelo.", padroeiro:"Padroeira dos pescadores portugueses."},
+  {nome:"Santo Alberto Magno", tipo:"santo", origem:"Frade dominicano e bispo alemão do século XIII, um dos maiores estudiosos de filosofia e ciências naturais da Idade Média, mestre de São Tomás de Aquino.", padroeiro:"Padroeiro dos cientistas e estudiosos."},
+  {nome:"Santo Albino", tipo:"santo", origem:"Bispo francês do século VI, conhecido por sua atuação pastoral e por fundar mosteiros na região da Bretanha.", padroeiro:"Padroeiro de comunidades religiosas locais na França."},
+  {nome:"Santo Aleixo", tipo:"santo", origem:"Segundo a tradição, jovem romano que abandonou riqueza e casamento para viver em pobreza e oração, retornando incógnito à própria casa.", padroeiro:"Padroeiro dos mendigos e peregrinos."},
+  {nome:"Santa Alice", tipo:"santa", origem:"Nome de diversas santas e beatas medievais europeias, geralmente ligadas à vida monástica e de caridade.", padroeiro:"Padroeira de devoções locais europeias."},
+  {nome:"Nossa Senhora do Alívio", tipo:"senhora", origem:"Devoção a Maria como fonte de alívio e consolo para os que sofrem dificuldades e enfermidades.", padroeiro:"Padroeira de quem busca alívio nas dores da vida."},
+  {nome:"Santo Ambrósio", tipo:"santo", origem:"Bispo de Milão no século IV, grande pregador e responsável pela conversão e batismo de Santo Agostinho.", padroeiro:"Padroeiro de apicultores e estudantes."},
+  {nome:"Nossa Senhora do Amparo", tipo:"senhora", origem:"Devoção a Maria como amparo e refúgio seguro nas dificuldades, com diversos santuários dedicados a este título no Brasil e Portugal.", padroeiro:"Padroeira de cidades e paróquias brasileiras."},
+  {nome:"Santo André", tipo:"santo", origem:"Um dos doze apóstolos, irmão de São Pedro, pregou o Evangelho na Grécia e Ásia Menor, sendo martirizado em uma cruz em forma de X.", padroeiro:"Padroeiro da Escócia e dos pescadores."},
+  {nome:"Santo André Dung-Lac e companheiros", tipo:"santo", origem:"Padre vietnamita e companheiros mártires do século XIX, mortos durante perseguições aos cristãos no Vietnã.", padroeiro:"Padroeiros dos mártires vietnamitas."},
+  {nome:"Santo Aníbal Maria di Francia", tipo:"santo", origem:"Padre italiano dos séculos XIX e XX, dedicado à educação de órfãos e à promoção de vocações sacerdotais.", padroeiro:"Padroeiro das vocações religiosas."},
+  {nome:"Santo Anselmo", tipo:"santo", origem:"Monge beneditino e arcebispo de Canterbury no século XI, considerado um dos pais da filosofia escolástica medieval.", padroeiro:"Padroeiro dos teólogos e filósofos."},
+  {nome:"Santo Antão", tipo:"santo", origem:"Monge egípcio do século III e IV, considerado o pai do monasticismo cristão por se retirar ao deserto em busca de vida ascética.", padroeiro:"Padroeiro dos animais domésticos."},
+  {nome:"Santo Antônio Maria Claret", tipo:"santo", origem:"Bispo espanhol do século XIX, fundador dos Missionários Claretianos, dedicado intensamente à pregação popular.", padroeiro:"Padroeiro dos editores católicos e tecelões."},
+  {nome:"Santo Antônio Maria Zacarias", tipo:"santo", origem:"Padre italiano do século XVI, fundador da Congregação dos Barnabitas, dedicado à reforma espiritual do clero e dos leigos.", padroeiro:"Padroeiro de congregações religiosas reformadoras."},
+  {nome:"Santa Apolônia", tipo:"santa", origem:"Mártir egípcia do século III, teve os dentes arrancados durante a tortura por se recusar a renegar sua fé.", padroeiro:"Padroeira dos dentistas e contra dores de dente."},
+  {nome:"Nossa Senhora da Apresentação", tipo:"senhora", origem:"Devoção que celebra a apresentação de Maria, ainda criança, ao Templo de Jerusalém, segundo a tradição cristã.", padroeiro:"Padroeira de colégios e instituições de ensino religioso."},
+  {nome:"Nossa Senhora da Assunção", tipo:"senhora", origem:"Celebra o dogma de que Maria foi elevada ao Céu em corpo e alma ao final de sua vida terrena.", padroeiro:"Padroeira de diversas catedrais e nações católicas."},
+  {nome:"São Barnabé", tipo:"santo", origem:"Companheiro de missões de São Paulo no livro de Atos dos Apóstolos, importante na expansão do cristianismo primitivo entre os gentios.", padroeiro:"Padroeiro de Chipre e dos pacificadores."},
+  {nome:"São Basílio Magno", tipo:"santo", origem:"Bispo da Capadócia no século IV, organizador da vida monástica oriental e grande defensor da doutrina da Trindade.", padroeiro:"Padroeiro dos hospitais e reformadores monásticos."},
+  {nome:"Nossa Senhora da Batalha", tipo:"senhora", origem:"Devoção portuguesa a Maria associada a vitórias militares históricas, com destaque para o Mosteiro da Batalha, em Portugal.", padroeiro:"Padroeira invocada em tempos de conflito."},
+  {nome:"Nossa Senhora de Belém", tipo:"senhora", origem:"Devoção a Maria ligada ao lugar do nascimento de Jesus, Belém, celebrada especialmente em torno do Natal.", padroeiro:"Padroeira do mistério da Encarnação."},
+  {nome:"São Boaventura", tipo:"santo", origem:"Frade franciscano italiano do século XIII, ministro-geral da Ordem e um dos maiores teólogos medievais, Doutor da Igreja.", padroeiro:"Padroeiro dos teólogos franciscanos."},
+  {nome:"Nossa Senhora do Bom Conselho", tipo:"senhora", origem:"Devoção ligada a uma imagem milagrosa em Genazzano, Itália, associada a Maria como guia segura nas decisões da vida.", padroeiro:"Padroeira de quem busca discernimento e orientação."},
+  {nome:"Nossa Senhora do Bom Despacho", tipo:"senhora", origem:"Devoção a Maria como auxílio para a boa resolução de questões e dificuldades práticas da vida.", padroeiro:"Padroeira de causas administrativas e burocráticas."},
+  {nome:"Nossa Senhora do Bom Parto", tipo:"senhora", origem:"Devoção a Maria invocada para a proteção das gestantes e a segurança no momento do parto.", padroeiro:"Padroeira das gestantes."},
+  {nome:"São Bonifácio", tipo:"santo", origem:"Monge inglês do século VIII, conhecido como 'Apóstolo da Alemanha' pela evangelização dos povos germânicos.", padroeiro:"Padroeiro da Alemanha."},
+  {nome:"Dom Bosco", tipo:"santo", origem:"Já incluído como São João Bosco — devoção idêntica, nome popularmente usado no Brasil.", padroeiro:"Padroeiro dos educadores."},
+  {nome:"São Brás", tipo:"santo", origem:"Bispo e médico da Armênia, mártir do século III ou IV, conhecido por curar um menino que se engasgava com uma espinha de peixe.", padroeiro:"Padroeiro contra doenças de garganta."},
+  {nome:"Santa Brígida", tipo:"santa", origem:"Nobre sueca do século XIV, fundadora da Ordem Brigidina, reconhecida por suas revelações místicas sobre a Paixão de Cristo.", padroeiro:"Padroeira da Suécia e dos peregrinos."},
+  {nome:"São Bruno", tipo:"santo", origem:"Fundador da Ordem Cartuxa no século XI, dedicada à vida contemplativa em silêncio e solidão.", padroeiro:"Padroeiro dos monges contemplativos."},
+  {nome:"Nossa Senhora da Cabeça", tipo:"senhora", origem:"Devoção espanhola ligada a um santuário no alto de uma colina (cabeça de monte), na região de Andújar.", padroeiro:"Padroeira da região de Andújar, Espanha."},
+  {nome:"Nossa Senhora das Candeias", tipo:"senhora", origem:"Devoção que celebra a apresentação de Jesus no Templo, com a tradicional bênção das velas (candeias) em 2 de fevereiro.", padroeiro:"Padroeira da luz de Cristo no mundo."},
+  {nome:"Nossa Senhora da Candelária", tipo:"senhora", origem:"Mesma origem da Festa das Candeias, com grande devoção popular nas Ilhas Canárias e em diversas cidades latino-americanas.", padroeiro:"Padroeira das Ilhas Canárias."},
+  {nome:"Nossa Senhora do Cenáculo", tipo:"senhora", origem:"Devoção a Maria ligada ao Cenáculo, sala onde os apóstolos receberam o Espírito Santo em Pentecostes, com Maria orando ao centro.", padroeiro:"Padroeira da oração em comunidade."},
+  {nome:"São Cirilo de Jerusalém", tipo:"santo", origem:"Bispo do século IV, conhecido por suas catequeses que explicavam a fé cristã aos que se preparavam para o Batismo.", padroeiro:"Padroeiro dos catequistas."},
+  {nome:"São Cláudio Colombiere", tipo:"santo", origem:"Padre jesuíta francês do século XVII, diretor espiritual de Santa Margarida Maria Alacoque na difusão da devoção ao Sagrado Coração.", padroeiro:"Padroeiro de diretores espirituais."},
+  {nome:"Santa Clélia Barbieri", tipo:"santa", origem:"Jovem italiana do século XIX, fundadora de uma congregação dedicada à catequese e ao serviço aos pobres, morta ainda jovem.", padroeiro:"Padroeira de jovens fundadoras de obras de caridade."},
+  {nome:"São Clemente I", tipo:"santo", origem:"Um dos primeiros papas da Igreja, no século I, conhecido por sua carta aos cristãos de Corinto pedindo unidade e paz.", padroeiro:"Padroeiro dos marinheiros."},
+  {nome:"Santa Clotilde", tipo:"santa", origem:"Rainha franca do século V e VI, responsável pela conversão de seu marido, o rei Clóvis, ao cristianismo.", padroeiro:"Padroeira das rainhas e mães cristãs."},
+  {nome:"Nossa Senhora da Consolata", tipo:"senhora", origem:"Devoção italiana a Maria como consoladora dos aflitos, ligada a um santuário em Turim.", padroeiro:"Padroeira do consolo nas tristezas."},
+  {nome:"Nossa Senhora de Copacabana", tipo:"senhora", origem:"Devoção originária da Bolívia, junto ao Lago Titicaca, que deu nome à praia de Copacabana, no Rio de Janeiro.", padroeiro:"Padroeira da Bolívia."},
+  {nome:"Imaculado Coração de Maria", tipo:"senhora", origem:"Devoção ao coração de Maria como símbolo de pureza e amor materno, fortalecida pelas aparições de Fátima.", padroeiro:"Padroeira da consagração das famílias."},
+  {nome:"São Dâmaso I", tipo:"santo", origem:"Papa do século IV que incentivou a tradução da Bíblia para o latim e organizou o cânone bíblico oficial da Igreja.", padroeiro:"Padroeiro de arquivistas eclesiásticos."},
+  {nome:"São Davi", tipo:"santo", origem:"Rei e profeta do Antigo Testamento, autor de boa parte dos Salmos, ancestral de Jesus segundo os Evangelhos.", padroeiro:"Padroeiro dos poetas e salmistas."},
+  {nome:"Nossa Senhora da Defesa", tipo:"senhora", origem:"Devoção a Maria como proteção e defesa espiritual contra perigos e adversidades.", padroeiro:"Padroeira de cidades e comunidades em momentos de ameaça."},
+  {nome:"São Denis", tipo:"santo", origem:"Primeiro bispo de Paris, mártir do século III, padroeiro da França junto a outros santos nacionais.", padroeiro:"Padroeiro da França."},
+  {nome:"Nossa Senhora Desatadora dos Nós", tipo:"senhora", origem:"Devoção baseada em uma pintura do século XVIII na Alemanha, retratando Maria desfazendo nós em uma fita, símbolo das dificuldades da vida.", padroeiro:"Padroeira de quem busca solução para problemas complexos."},
+  {nome:"Nossa Senhora do Desterro", tipo:"senhora", origem:"Devoção a Maria associada ao exílio da Sagrada Família no Egito, fugindo da perseguição de Herodes.", padroeiro:"Padroeira de exilados e refugiados."},
+  {nome:"São Domingos de Silos", tipo:"santo", origem:"Abade espanhol do século XI, reformador monástico e responsável pela reconstrução de mosteiros castelhanos.", padroeiro:"Padroeiro de prisioneiros e mães que desejam ter filhos."},
+  {nome:"São Domingos Sávio", tipo:"santo", origem:"Jovem aluno de Dom Bosco no século XIX, reconhecido por sua piedade precoce e vida virtuosa apesar da morte aos 14 anos.", padroeiro:"Padroeiro dos coroinhas e jovens cantores."},
+  {nome:"Santa Dorotéia", tipo:"santa", origem:"Mártir da Capadócia, no século IV, jovem cristã torturada e morta por se recusar a abandonar sua fé.", padroeiro:"Padroeira de jardineiros e floristas."},
+  {nome:"Santo Eduardo", tipo:"santo", origem:"Rei da Inglaterra no século XI, conhecido por sua piedade e governo justo, sendo um dos últimos reis anglo-saxões santificados.", padroeiro:"Padroeiro da realeza inglesa."},
+  {nome:"Santa Efigênia", tipo:"santa", origem:"Princesa etíope dos primeiros séculos do cristianismo, convertida pela pregação de São Mateus, muito venerada entre comunidades afro-católicas no Brasil.", padroeiro:"Padroeira dos afrodescendentes."},
+  {nome:"Santa Escolástica", tipo:"santa", origem:"Irmã gêmea de São Bento, no século VI, fundadora de um dos primeiros mosteiros femininos da tradição beneditina.", padroeiro:"Padroeira das freiras beneditinas."},
+  {nome:"Nossa Senhora da Esperança", tipo:"senhora", origem:"Devoção a Maria como sinal de esperança em meio às dificuldades, associada também à espera do nascimento de Jesus.", padroeiro:"Padroeira de gestantes e de quem espera por uma graça."},
+  {nome:"Nossa Senhora da Estrela", tipo:"senhora", origem:"Título mariano que associa Maria à 'Estrela da Manhã', guia segura para os que navegam pela vida.", padroeiro:"Padroeira dos navegantes."},
+  {nome:"Santa Eulália de Barcelona", tipo:"santa", origem:"Jovem mártir espanhola do século III ou IV, padroeira de Barcelona junto a Santa Eulália de Mérida.", padroeiro:"Padroeira de Barcelona."},
+  {nome:"Nossa Senhora da Evangelização", tipo:"senhora", origem:"Devoção a Maria como modelo e auxílio para todo trabalho de evangelização e missão da Igreja.", padroeiro:"Padroeira dos evangelizadores e missionários."},
+  {nome:"São Félix de Valois", tipo:"santo", origem:"Fundador, junto com São João de Mata, da Ordem da Santíssima Trindade no século XII, dedicada ao resgate de cativos e escravizados.", padroeiro:"Padroeiro de obras de resgate de cativos."},
+  {nome:"São Fernando", tipo:"santo", origem:"Rei Fernando III de Castela, no século XIII, conhecido por unir reinos cristãos da Espanha e por sua devoção pessoal e justiça no governo.", padroeiro:"Padroeiro de governantes católicos."},
+  {nome:"São Filipe Benício", tipo:"santo", origem:"Religioso italiano do século XIII, superior-geral da Ordem dos Servitas, dedicado à reforma espiritual da ordem.", padroeiro:"Padroeiro dos servitas."},
+  {nome:"Santa Francisca de Roma", tipo:"santa", origem:"Nobre romana do século XIV e XV, dedicou-se à caridade com os pobres mesmo vivendo casada e em meio à vida nobre.", padroeiro:"Padroeira dos motoristas (por relatos de proteção em viagens)."},
+  {nome:"Santa Francisca Xavier Cabrini", tipo:"santa", origem:"Religiosa italiana do século XIX e XX, dedicou a vida a imigrantes nos Estados Unidos, fundando escolas, hospitais e orfanatos.", padroeiro:"Padroeira dos imigrantes."},
+  {nome:"São Francisco Caracciolo", tipo:"santo", origem:"Sacerdote italiano do século XVI, cofundador dos Clérigos Regulares Menores, dedicado à adoração eucarística contínua.", padroeiro:"Padroeiro de comunidades de adoração eucarística."},
+  {nome:"São Francisco de Paula", tipo:"santo", origem:"Eremita italiano do século XV, fundador da Ordem dos Mínimos, conhecido por viver em extrema austeridade e penitência.", padroeiro:"Padroeiro dos marinheiros italianos."},
+  {nome:"São Frediano", tipo:"santo", origem:"Bispo de Lucca, na Itália, no século VI, lembrado por obras de engenharia para conter as cheias do rio Serchio.", padroeiro:"Padroeiro de Lucca, Itália."},
+  {nome:"Frei Leão", tipo:"santo", origem:"Um dos primeiros companheiros de São Francisco de Assis, conhecido por sua proximidade e amizade com o fundador franciscano.", padroeiro:"Padroeiro de freis franciscanos."},
+  {nome:"São Gabino", tipo:"santo", origem:"Mártir romano dos primeiros séculos do cristianismo, pai de Santa Susana, venerado em tradições romanas antigas.", padroeiro:"Devoção romana antiga."},
+  {nome:"São Gaspar Bertoni", tipo:"santo", origem:"Padre italiano dos séculos XVIII e XIX, fundador da Congregação dos Estigmatinos, dedicado à formação espiritual do clero.", padroeiro:"Padroeiro de formadores religiosos."},
+  {nome:"São Gelásio I", tipo:"santo", origem:"Papa do século V, defensor da autoridade espiritual da Igreja frente ao poder político de sua época.", padroeiro:"Padroeiro de questões entre Igreja e Estado."},
+  {nome:"Santa Genoveva", tipo:"santa", origem:"Jovem francesa do século V, conhecida por sua intercessão na proteção de Paris diante da ameaça de invasões.", padroeiro:"Padroeira de Paris."},
+  {nome:"Santos Gervásio e Protásio", tipo:"santo", origem:"Irmãos gêmeos mártires dos primeiros séculos do cristianismo, venerados especialmente em Milão, na Itália.", padroeiro:"Padroeiros de Milão."},
+  {nome:"Santa Gianna Beretta Molla", tipo:"santa", origem:"Médica italiana do século XX que recusou tratamento que poderia salvar sua vida para preservar a do filho que esperava, falecendo dias após o parto.", padroeiro:"Padroeira das mães e médicos católicos."},
+  {nome:"Nossa Senhora da Glória", tipo:"senhora", origem:"Devoção a Maria associada à sua glorificação no Céu, com diversos templos e paróquias dedicados a este título no Brasil.", padroeiro:"Padroeira de paróquias e cidades brasileiras."},
+  {nome:"São Gregório João Barbarigo", tipo:"santo", origem:"Cardeal italiano do século XVII, dedicado à reforma do clero e à fundação de seminários e bibliotecas.", padroeiro:"Padroeiro de seminaristas."},
+  {nome:"São Gregório Magno", tipo:"santo", origem:"Papa do século VI e VII, organizador da liturgia (o canto gregoriano leva seu nome) e grande reformador administrativo da Igreja.", padroeiro:"Padroeiro dos músicos sacros e cantores."},
+  {nome:"Nossa Senhora da Guarda", tipo:"senhora", origem:"Devoção a Maria como proteção e guarda espiritual constante sobre seus devotos.", padroeiro:"Padroeira da proteção espiritual diária."},
+  {nome:"Nossa Senhora da Guia", tipo:"senhora", origem:"Devoção a Maria como guia segura no caminho da vida e da fé, com santuários no Brasil e Portugal.", padroeiro:"Padroeira de viajantes e pescadores."},
+  {nome:"São Guido Maria Conforti", tipo:"santo", origem:"Bispo italiano dos séculos XIX e XX, fundador dos Missionários Xaverianos, dedicado às missões na China. Foi beatificado em 1996 por João Paulo II e canonizado Santo em 2011 por Bento XVI.", padroeiro:"Padroeiro de missionários na Ásia."},
+  {nome:"São Guilherme de Bourges", tipo:"santo", origem:"Arcebispo francês do século XII e XIII, conhecido por sua vida austera e dedicação aos pobres apesar de origem nobre.", padroeiro:"Padroeiro de Bourges, França."},
+  {nome:"Santa Helena", tipo:"santa", origem:"Mãe do imperador Constantino, no século IV, tradicionalmente associada à descoberta da Vera Cruz em Jerusalém.", padroeiro:"Padroeira dos arqueólogos e convertidos tardios."},
+  {nome:"Santo Henrique", tipo:"santo", origem:"Imperador do Sacro Império Romano-Germânico no século XI, conhecido por unir governo justo a profunda vida de oração e castidade no casamento.", padroeiro:"Padroeiro de governantes cristãos."},
+  {nome:"Santo Hermenegildo", tipo:"santo", origem:"Príncipe visigodo da Espanha no século VI, martirizado por seu próprio pai por se converter ao catolicismo.", padroeiro:"Padroeiro de convertidos perseguidos pela família."},
+  {nome:"Santo Hilário de Poitiers", tipo:"santo", origem:"Bispo francês do século IV, grande defensor da doutrina da Trindade diante de heresias da época, Doutor da Igreja.", padroeiro:"Padroeiro de advogados e estudantes de teologia."},
+  {nome:"Nossa Senhora da Humildade", tipo:"senhora", origem:"Devoção a Maria sob o aspecto de sua humildade ao aceitar a vontade de Deus no anúncio do anjo Gabriel.", padroeiro:"Padroeira da virtude da humildade."},
+  {nome:"Santo Inácio de Antioquia", tipo:"santo", origem:"Bispo de Antioquia nos primeiros séculos do cristianismo, martirizado em Roma, autor de cartas importantes para a teologia primitiva.", padroeiro:"Padroeiro dos bispos perseguidos."},
+  {nome:"Santo Inácio de Láconi", tipo:"santo", origem:"Frade capuchinho italiano do século XVIII, conhecido por sua simplicidade e dedicação aos pobres na ilha da Sardenha.", padroeiro:"Padroeiro de esmoleiros religiosos."},
+  {nome:"Santa Inês", tipo:"santa", origem:"Jovem mártir romana do século III ou IV, morta ainda adolescente por se recusar a renunciar à fé e ao voto de virgindade.", padroeiro:"Padroeira das jovens e da castidade."},
+  {nome:"Santa Inês de Montepulciano", tipo:"santa", origem:"Religiosa italiana do século XIII, fundadora de um mosteiro dominicano, reconhecida por sua vida de oração e milagres.", padroeiro:"Padroeira de religiosas dominicanas."},
+  {nome:"Santos Inocentes Mártires", tipo:"santo", origem:"As crianças de Belém mortas por ordem do rei Herodes, ao tentar eliminar o recém-nascido Jesus, segundo o Evangelho de Mateus.", padroeiro:"Padroeiros das crianças vítimas de violência."},
+  {nome:"Santo Isidoro", tipo:"santo", origem:"Bispo de Sevilha nos séculos VI e VII, importante enciclopedista e organizador do saber da Antiguidade tardia.", padroeiro:"Padroeiro da internet e dos estudantes."},
+  {nome:"Santo Ivo", tipo:"santo", origem:"Advogado e padre bretão do século XIII, conhecido por defender gratuitamente os pobres na justiça.", padroeiro:"Padroeiro dos advogados."},
+  {nome:"São Januário", tipo:"santo", origem:"Bispo de Benevento, na Itália, mártir do século III ou IV, cujo sangue relicário em Nápoles tradicionalmente 'liquefaz' em datas específicas.", padroeiro:"Padroeiro de Nápoles."},
+  {nome:"São João Batista de La Salle", tipo:"santo", origem:"Padre francês do século XVII e XVIII, fundador dos Irmãos das Escolas Cristãs, pioneiro na educação popular gratuita.", padroeiro:"Padroeiro dos professores."},
+  {nome:"São João da Cruz", tipo:"santo", origem:"Frade carmelita espanhol do século XVI, místico e poeta, parceiro de Santa Teresa de Ávila na reforma do Carmelo.", padroeiro:"Padroeiro dos poetas místicos."},
+  {nome:"São João de Deus", tipo:"santo", origem:"Religioso português do século XVI, fundador da Ordem Hospitaleira, dedicado ao cuidado de doentes mentais e pobres.", padroeiro:"Padroeiro dos hospitais e enfermeiros."},
+  {nome:"São João de Capistrano", tipo:"santo", origem:"Frade franciscano italiano do século XV, pregador que liderou a defesa espiritual da cidade de Belgrado contra invasões.", padroeiro:"Padroeiro de capelães militares."},
+  {nome:"São Josafá Kuncewicz", tipo:"santo", origem:"Bispo ucraniano do século XVI e XVII, mártir por trabalhar pela unidade entre a Igreja Católica e a Igreja Ortodoxa Oriental.", padroeiro:"Padroeiro da unidade entre cristãos do Oriente e Ocidente."},
+  {nome:"São José de Cupertino", tipo:"santo", origem:"Frade franciscano italiano do século XVII, conhecido por relatos de êxtases místicos e levitações durante a oração.", padroeiro:"Padroeiro de aviadores e estudantes com dificuldades."},
+  {nome:"Santa Josefina", tipo:"santa", origem:"Nome de diversas religiosas e mártires veneradas em devoções regionais, geralmente ligadas a obras de caridade.", padroeiro:"Padroeira de obras de caridade locais."},
+  {nome:"São Juan Diego Cuauhtlatoatzin", tipo:"santo", origem:"Indígena mexicano do século XVI a quem Nossa Senhora de Guadalupe apareceu, recebendo a imagem milagrosa em sua tilma.", padroeiro:"Padroeiro dos povos indígenas das Américas."},
+  {nome:"Santa Júlia", tipo:"santa", origem:"Mártir cristã dos primeiros séculos, venerada em diferentes regiões da Europa com relatos variados sobre sua vida.", padroeiro:"Padroeira de devoções regionais europeias."},
+  {nome:"Santa Juliana", tipo:"santa", origem:"Mártir dos primeiros séculos do cristianismo, torturada e morta por se recusar a abandonar sua fé.", padroeiro:"Padroeira de jovens perseguidas pela fé."},
+  {nome:"São Lázaro", tipo:"santo", origem:"Já incluído anteriormente — amigo de Jesus ressuscitado por Ele, irmão de Marta e Maria de Betânia.", padroeiro:"Padroeiro dos enfermos."},
+  {nome:"São Leandro", tipo:"santo", origem:"Bispo de Sevilha no século VI, irmão de Santo Isidoro, importante na conversão dos visigodos ao catolicismo na Espanha.", padroeiro:"Padroeiro de Sevilha."},
+  {nome:"São Leonardo de Noblac", tipo:"santo", origem:"Eremita francês do século VI, segundo a tradição obteve do rei o direito de libertar prisioneiros que invocassem seu nome.", padroeiro:"Padroeiro dos prisioneiros."},
+  {nome:"São Leonardo Murialdo", tipo:"santo", origem:"Padre italiano do século XIX, dedicado à educação e formação profissional de jovens trabalhadores pobres em Turim.", padroeiro:"Padroeiro de jovens trabalhadores."},
+  {nome:"São Leopoldo Mandic", tipo:"santo", origem:"Frade capuchinho croata radicado na Itália, no século XIX e XX, conhecido por longas horas dedicadas ao confessionário.", padroeiro:"Padroeiro dos confessores."},
+  {nome:"Santa Lídia", tipo:"santa", origem:"Mulher mencionada no livro de Atos dos Apóstolos, comerciante de tecidos púrpura, uma das primeiras convertidas ao cristianismo na Europa.", padroeiro:"Padroeira de comerciantes e tintureiros."},
+  {nome:"Santa Liduína", tipo:"santa", origem:"Mística holandesa do século XIV e XV, viveu décadas com grave enfermidade física, unindo o sofrimento à oração e à mística.", padroeiro:"Padroeira dos enfermos crônicos."},
+  {nome:"São Luís Orione", tipo:"santo", origem:"Padre italiano dos séculos XIX e XX, fundador de obras dedicadas a pessoas com deficiência e em situação de pobreza extrema.", padroeiro:"Padroeiro de obras para pessoas com deficiência."},
+  {nome:"Santa Luísa de Marillac", tipo:"santa", origem:"Religiosa francesa do século XVII, cofundadora junto a São Vicente de Paulo das Filhas da Caridade, dedicadas ao serviço dos pobres.", padroeiro:"Padroeira das assistentes sociais."},
+  {nome:"São Macário", tipo:"santo", origem:"Monge egípcio do século IV, discípulo de Santo Antão, importante na formação da espiritualidade monástica do deserto.", padroeiro:"Padroeiro de monges eremitas."},
+  {nome:"Santa Madalena de Canossa", tipo:"santa", origem:"Nobre italiana dos séculos XVIII e XIX, renunciou à vida de privilégios para fundar obras dedicadas à educação de meninas pobres.", padroeiro:"Padroeira de educadoras de jovens pobres."},
+  {nome:"Santa Mafalda", tipo:"santa", origem:"Princesa portuguesa do século XII e XIII, viveu em penitência e caridade após anular seu casamento por motivos de consanguinidade.", padroeiro:"Padroeira de Portugal."},
+  {nome:"São Marcelo I", tipo:"santo", origem:"Papa do início do século IV, governou a Igreja em tempo de intensa perseguição romana, sendo exilado por sua fé.", padroeiro:"Padroeiro de cocheiros (segundo tradição antiga)."},
+  {nome:"Santa Margarida de Cortona", tipo:"santa", origem:"Mística italiana do século XIII, viveu intensa conversão após anos de vida mundana, dedicando-se depois à penitência e caridade.", padroeiro:"Padroeira de mães solteiras e penitentes."},
+  {nome:"Maria Santíssima", tipo:"senhora", origem:"Título geral de veneração a Maria, Mãe de Jesus, reconhecida pela Igreja Católica como a mais excelsa entre os santos.", padroeiro:"Mãe espiritual de toda a Igreja."},
+  {nome:"Santa Maria de Cléofas", tipo:"santa", origem:"Mulher mencionada nos Evangelhos como uma das que estavam junto à cruz de Jesus e testemunharam sua ressurreição.", padroeiro:"Padroeira das mulheres fiéis ao pé da cruz."},
+  {nome:"Santa Maria Goretti", tipo:"santa", origem:"Já incluída anteriormente — jovem italiana morta ao resistir a um ataque, perdoando o agressor.", padroeiro:"Padroeira das vítimas de abuso."},
+  {nome:"Santa Maria Josefa Rossello", tipo:"santa", origem:"Religiosa italiana do século XIX, fundadora de uma congregação dedicada à educação de meninas pobres e órfãs.", padroeiro:"Padroeira de obras para crianças órfãs."},
+  {nome:"Santa Maria Madalena", tipo:"santa", origem:"Discípula próxima de Jesus, primeira testemunha de sua ressurreição segundo os Evangelhos, anunciando a Boa Nova aos apóstolos.", padroeiro:"Padroeira dos convertidos e contemplativos."},
+  {nome:"Santa Mariana", tipo:"santa", origem:"Nome de diversas santas e beatas latino-americanas e europeias, geralmente ligadas a devoções regionais de penitência.", padroeiro:"Padroeira de devoções regionais."},
+  {nome:"Santa Marta, irmã de Lázaro", tipo:"santa", origem:"Irmã de Lázaro e Maria de Betânia, amiga de Jesus, lembrada nos Evangelhos por sua hospitalidade e fé.", padroeiro:"Padroeira das donas de casa e cozinheiras."},
+  {nome:"São Martinho de Tours", tipo:"santo", origem:"Soldado romano convertido ao cristianismo no século IV, tornou-se bispo de Tours, famoso por dividir sua capa com um mendigo.", padroeiro:"Padroeiro dos soldados e mendigos."},
+  {nome:"São Matias Apóstolo", tipo:"santo", origem:"Discípulo escolhido para substituir Judas Iscariotes entre os doze apóstolos, conforme narrado em Atos dos Apóstolos.", padroeiro:"Padroeiro de carpinteiros e açougueiros."},
+  {nome:"Santa Matilde", tipo:"santa", origem:"Rainha da Germânia no século X, conhecida por suas obras de caridade e pela fundação de mosteiros e igrejas.", padroeiro:"Padroeira de viúvas e rainhas."},
+  {nome:"Nossa Senhora Medianeira", tipo:"senhora", origem:"Título mariano que destaca o papel de Maria como mediadora entre os fiéis e Jesus Cristo.", padroeiro:"Padroeira da intercessão e mediação espiritual."},
+  {nome:"Nossa Senhora das Mercês", tipo:"senhora", origem:"Devoção ligada à Ordem dos Mercedários, fundada na Espanha no século XIII para resgate de cativos cristãos.", padroeiro:"Padroeira de prisioneiros e cativos."},
+  {nome:"Nossa Senhora dos Milagres", tipo:"senhora", origem:"Devoção popular a Maria associada a graças e curas extraordinárias atribuídas à sua intercessão.", padroeiro:"Padroeira de curas e graças especiais."},
+  {nome:"Nossa Senhora da Misericórdia", tipo:"senhora", origem:"Devoção a Maria como Mãe de misericórdia, amparo para pecadores e necessitados, ligada às Santas Casas de Misericórdia.", padroeiro:"Padroeira das Santas Casas de Misericórdia."},
+  {nome:"São Narciso", tipo:"santo", origem:"Bispo de Jerusalém nos primeiros séculos do cristianismo, lembrado por sua longevidade e fidelidade à fé.", padroeiro:"Padroeiro de Jerusalém nos primeiros séculos."},
+  {nome:"Nossa Senhora da Natividade", tipo:"senhora", origem:"Devoção que celebra o nascimento de Maria, comemorado tradicionalmente em 8 de setembro.", padroeiro:"Padroeira do início da história da salvação."},
+  {nome:"Nossa Senhora dos Navegantes", tipo:"senhora", origem:"Devoção a Maria como protetora de marinheiros e pescadores em suas viagens pelo mar e rios.", padroeiro:"Padroeira dos navegantes e pescadores."},
+  {nome:"São Nicolau", tipo:"santo", origem:"Bispo de Mira, na atual Turquia, no século IV, conhecido por sua generosidade com os pobres — origem da figura do Papai Noel.", padroeiro:"Padroeiro das crianças e marinheiros."},
+  {nome:"São Norberto", tipo:"santo", origem:"Fundador da Ordem dos Premonstratenses no século XII, dedicado à reforma do clero e à vida religiosa em comunidade.", padroeiro:"Padroeiro de cônegos regulares."},
+  {nome:"Nossa Senhora do Ó", tipo:"senhora", origem:"Devoção que celebra a espera do nascimento de Jesus durante o Advento, ligada às antigas antífonas 'Ó' rezadas antes do Natal.", padroeiro:"Padroeira da espera e da esperança no Advento."},
+  {nome:"Santa Odilia", tipo:"santa", origem:"Religiosa francesa do século VII e VIII, nascida cega e curada milagrosamente no batismo, fundadora de um mosteiro na Alsácia.", padroeiro:"Padroeira dos cegos e da Alsácia."},
+  {nome:"Nossa Senhora da Paixão", tipo:"senhora", origem:"Devoção a Maria associada à sua dor durante a Paixão de Cristo, semelhante à devoção de Nossa Senhora das Dores.", padroeiro:"Padroeira de quem sofre junto a Cristo."},
+  {nome:"Santa Patrícia", tipo:"santa", origem:"Nobre romana dos primeiros séculos do cristianismo, muito venerada em Nápoles, na Itália.", padroeiro:"Padroeira de Nápoles."},
+  {nome:"São Patrício", tipo:"santo", origem:"Missionário britânico do século V, conhecido como o grande evangelizador da Irlanda, usando o trevo para explicar a Santíssima Trindade.", padroeiro:"Padroeiro da Irlanda."},
+  {nome:"Santa Paula de Roma", tipo:"santa", origem:"Nobre romana do século IV, discípula e colaboradora de São Jerônimo, dedicou sua fortuna a obras de caridade e estudos bíblicos.", padroeiro:"Padroeira de viúvas dedicadas à caridade."},
+  {nome:"São Paulo da Cruz", tipo:"santo", origem:"Padre italiano do século XVIII, fundador da Congregação Passionista, dedicada à pregação sobre a Paixão de Cristo.", padroeiro:"Padroeiro de pregadores da Paixão."},
+  {nome:"Nossa Senhora da Paz", tipo:"senhora", origem:"Devoção a Maria como Rainha da Paz, invocada especialmente em tempos de guerra e conflito.", padroeiro:"Padroeira da paz entre os povos."},
+  {nome:"São Pedro Canísio", tipo:"santo", origem:"Padre jesuíta holandês do século XVI, importante catequista e teólogo durante a Reforma Católica, Doutor da Igreja.", padroeiro:"Padroeiro dos catequistas alemães."},
+  {nome:"São Pedro Damião", tipo:"santo", origem:"Monge e cardeal italiano do século XI, dedicado à reforma espiritual do clero de sua época.", padroeiro:"Padroeiro de reformadores eclesiásticos."},
+  {nome:"Nossa Senhora da Pena", tipo:"senhora", origem:"Devoção portuguesa a Maria ligada a santuários situados em montes ou penhascos, como o Palácio da Pena, em Sintra.", padroeiro:"Padroeira de Sintra, Portugal."},
+  {nome:"Nossa Senhora da Penha", tipo:"senhora", origem:"Devoção a Maria com diversos santuários no Brasil, especialmente no Rio de Janeiro e no Espírito Santo, situados em locais altos.", padroeiro:"Padroeira de cidades brasileiras como Vitória (ES)."},
+  {nome:"Nossa Senhora Porta do Céu", tipo:"senhora", origem:"Título mariano que destaca Maria como caminho de acesso ao Céu, intercessora junto a Deus.", padroeiro:"Padroeira de quem busca a salvação eterna."},
+  {nome:"Nossa Senhora dos Prazeres", tipo:"senhora", origem:"Devoção portuguesa a Maria com santuários especialmente nos Açores e em Lisboa.", padroeiro:"Padroeira de comunidades açorianas."},
+  {nome:"Nossa Senhora da Purificação", tipo:"senhora", origem:"Devoção que celebra o rito judaico de purificação cumprido por Maria após o nascimento de Jesus, unido à Apresentação no Templo.", padroeiro:"Padroeira da pureza espiritual."},
+  {nome:"São Rafael Arcanjo", tipo:"santo", origem:"Arcanjo mencionado no livro de Tobias, responsável por curar a cegueira de Tobit e guiar seu filho em uma jornada segura.", padroeiro:"Padroeiro dos viajantes e da cura."},
+  {nome:"São Raimundo de Penhaforte", tipo:"santo", origem:"Frade dominicano espanhol do século XIII, organizador do Direito Canônico da Igreja em sua época.", padroeiro:"Padroeiro dos advogados canônicos."},
+  {nome:"São Raimundo Nonato", tipo:"santo", origem:"Frade mercedário espanhol do século XIII, nascido por cesariana após a morte da mãe, dedicado ao resgate de cativos cristãos.", padroeiro:"Padroeiro das gestantes e parteiras."},
+  {nome:"Nossa Senhora Rainha", tipo:"senhora", origem:"Título mariano que celebra a realeza espiritual de Maria, coroada Rainha do Céu e da Terra.", padroeiro:"Padroeira da realeza espiritual da Igreja."},
+  {nome:"Nossa Senhora Rainha da Paz de Medjugorje", tipo:"senhora", origem:"Devoção ligada a relatos de aparições marianas iniciados em 1981 em Medjugorje, na Bósnia-Herzegovina, ainda em discernimento pela Igreja.", padroeiro:"Devoção contemporânea à paz mundial."},
+  {nome:"Nossa Senhora Rainha dos Anjos", tipo:"senhora", origem:"Título mariano que celebra Maria como Rainha sobre todos os anjos do Céu.", padroeiro:"Padroeira de devoções angelicais."},
+  {nome:"Nossa Senhora dos Remédios", tipo:"senhora", origem:"Devoção portuguesa e brasileira a Maria como remédio espiritual e físico para os que sofrem enfermidades.", padroeiro:"Padroeira de doentes em diversas cidades brasileiras."},
+  {nome:"São Roberto Bellarmino", tipo:"santo", origem:"Cardeal jesuíta italiano dos séculos XVI e XVII, importante teólogo e catequista, Doutor da Igreja.", padroeiro:"Padroeiro dos catequistas e canonistas."},
+  {nome:"Nossa Senhora do Rocio", tipo:"senhora", origem:"Devoção a Maria ligada a um santuário no Paraná, com grande romaria popular no Brasil.", padroeiro:"Padroeira de Paranaguá (PR)."},
+  {nome:"Nossa Senhora da Rosa Mística", tipo:"senhora", origem:"Devoção ligada às revelações de Pierina Gilli, na Itália, em 1947, retratando Maria como a 'Rosa Mística' chorando lágrimas de sangue por pecadores.", padroeiro:"Padroeira da conversão dos pecadores."},
+  {nome:"Nossa Senhora das Rosas", tipo:"senhora", origem:"Devoção a Maria associada a relatos de rosas milagrosas em diferentes aparições e tradições populares.", padroeiro:"Padroeira da beleza espiritual e da pureza."},
+  {nome:"Santa Rute", tipo:"santa", origem:"Figura do Antigo Testamento, moabita que se tornou ancestral do rei Davi e de Jesus, símbolo de fidelidade e lealdade.", padroeiro:"Padroeira da fidelidade familiar."},
+  {nome:"Sagrado Coração de Maria", tipo:"senhora", origem:"Devoção paralela ao Sagrado Coração de Jesus, voltada ao amor materno e à compaixão de Maria pela humanidade.", padroeiro:"Padroeira da consagração ao amor de Maria."},
+  {nome:"Nossa Senhora da Saúde", tipo:"senhora", origem:"Devoção a Maria como protetora da saúde física e espiritual dos fiéis.", padroeiro:"Padroeira de quem busca cura e saúde."},
+  {nome:"São Sérgio", tipo:"santo", origem:"Oficial romano mártir do século IV, venerado especialmente nas tradições do Oriente cristão junto a São Baco.", padroeiro:"Padroeiro de soldados cristãos do Oriente."},
+  {nome:"São Severino", tipo:"santo", origem:"Monge e missionário do século V na região dos Alpes, conhecido por seu trabalho junto a populações em tempos de invasões bárbaras.", padroeiro:"Padroeiro de regiões alpinas europeias."},
+  {nome:"São Simão Stock", tipo:"santo", origem:"Religioso inglês do século XIII, prior-geral dos Carmelitas, a quem a tradição atribui o recebimento do Escapulário de Nossa Senhora do Carmo.", padroeiro:"Padroeiro dos devotos do escapulário carmelita."},
+  {nome:"Santa Sofia", tipo:"santa", origem:"Mártir cristã dos primeiros séculos, mãe de três filhas também mártires (Fé, Esperança e Caridade), segundo a tradição.", padroeiro:"Padroeira de mães de família cristãs."},
+  {nome:"São Tarcísio", tipo:"santo", origem:"Jovem mártir romano dos primeiros séculos, morto ao proteger a Eucaristia que levava aos cristãos perseguidos, recusando-se a entregá-la.", padroeiro:"Padroeiro dos coroinhas e ministros da Eucaristia."},
+  {nome:"Santa Teresa Eustochio Verzeri", tipo:"santa", origem:"Religiosa italiana do século XIX, fundadora de uma congregação dedicada à educação e formação cristã de jovens.", padroeiro:"Padroeira de educadoras religiosas."},
+  {nome:"Santo Turíbio de Mongrovejo", tipo:"santo", origem:"Bispo espanhol radicado no Peru no século XVI, dedicado à evangelização e organização da Igreja na América colonial.", padroeiro:"Padroeiro dos bispos latino-americanos."},
+  {nome:"Santa Úrsula", tipo:"santa", origem:"Princesa e mártir dos primeiros séculos do cristianismo, segundo a tradição morta junto a companheiras ao recusar um casamento pagão.", padroeiro:"Padroeira de educadoras e estudantes."},
+  {nome:"São Wenceslau", tipo:"santo", origem:"Duque da Boêmia no século X, conhecido por sua piedade e governo justo, assassinado por seu próprio irmão por motivos políticos.", padroeiro:"Padroeiro da República Tcheca."},
+  {nome:"Santa Zita", tipo:"santa", origem:"Empregada doméstica italiana do século XIII, reconhecida por sua fidelidade ao trabalho diário unida à intensa vida de oração.", padroeiro:"Padroeira das empregadas domésticas."},
+  {nome:"Santa Albertina", tipo:"santa", origem:"Nome de devoção ligado a santas e beatas de tradições locais europeias, com poucos registros históricos detalhados e amplamente difundidos.", padroeiro:"Devoção local específica."},
+  {nome:"Santa Ana", tipo:"santa", origem:"Mãe de Maria e avó de Jesus, segundo a tradição da Igreja (não citada diretamente nos Evangelhos canônicos, mas em textos da tradição cristã antiga).", padroeiro:"Padroeira das avós e das gestantes."},
+  {nome:"Santa Ângela", tipo:"santa", origem:"Nome de devoção a diversas santas e beatas, com destaque para Santa Ângela de Mérici, fundadora das Ursulinas.", padroeiro:"Padroeira de educadoras."},
+  {nome:"Santo Ângelo", tipo:"santo", origem:"Religioso carmelita do século XIII, mártir na Sicília, venerado por sua pregação e martírio pela fé.", padroeiro:"Padroeiro de carmelitas mártires."},
+  {nome:"Santo Antonino", tipo:"santo", origem:"Bispo dominicano italiano do século XV, conhecido por sua atuação como reformador moral e administrador eclesiástico em Florença.", padroeiro:"Padroeiro de administradores eclesiásticos."},
+  {nome:"Santo Antônio Aparecido", tipo:"santo", origem:"Título devocional que une a tradição de Santo Antônio de Pádua à devoção brasileira a Nossa Senhora Aparecida.", padroeiro:"Devoção popular brasileira combinada."},
+  {nome:"Santo Antônio Percierskij", tipo:"santo", origem:"Monge russo dos séculos XI e XII, fundador do monasticismo nas cavernas de Kiev, figura central do cristianismo oriental eslavo.", padroeiro:"Padroeiro do monasticismo russo antigo."},
+  {nome:"Santo Apolônio", tipo:"santo", origem:"Mártir cristão dos primeiros séculos, venerado em tradições do norte da África e do Oriente Médio.", padroeiro:"Devoção regional antiga."},
+  {nome:"Santo Arcádio", tipo:"santo", origem:"Mártir dos primeiros séculos do cristianismo, com veneração concentrada em tradições regionais europeias.", padroeiro:"Devoção local específica."},
+  {nome:"Santo Arnolfo de Metz", tipo:"santo", origem:"Bispo franco do século VII, ancestral da dinastia carolíngia, conhecido por sua vida de oração após deixar a vida pública.", padroeiro:"Padroeiro de cervejeiros."},
+  {nome:"Santo Arsênio", tipo:"santo", origem:"Ex-tutor da corte imperial romana que se retirou ao deserto egípcio no século IV para viver como monge eremita.", padroeiro:"Padroeiro de monges eremitas."},
+  {nome:"Santo Artur", tipo:"santo", origem:"Nome de devoção ligado a tradições britânicas e europeias, com registros históricos limitados sobre sua vida específica.", padroeiro:"Devoção local específica."},
+  {nome:"Santo Atílio", tipo:"santo", origem:"Mártir dos primeiros séculos do cristianismo, venerado em tradições regionais italianas.", padroeiro:"Devoção local específica."},
+  {nome:"Santa Beatriz", tipo:"santa", origem:"Nome de devoção a diversas santas e beatas medievais europeias ligadas à vida religiosa contemplativa.", padroeiro:"Devoção local específica."},
+  {nome:"Bem-aventurado Pedro Donders", tipo:"santo", beato:true, origem:"Padre holandês do século XIX, dedicado à evangelização de leprosos e povos indígenas no Suriname. Beatificado em 1982 — ainda sem canonização.", padroeiro:"Padroeiro de missionários junto a leprosos."},
+  {nome:"Bem-aventurado Pedro Vigne", tipo:"santo", beato:true, origem:"Padre francês do século XVIII, fundador de uma congregação dedicada à catequese rural na França. Permanece como Beato, ainda sem canonização.", padroeiro:"Padroeiro de catequistas rurais."},
+  {nome:"São Bernardino de Sena", tipo:"santo", origem:"Frade franciscano italiano do século XV, célebre pregador devoto do Santo Nome de Jesus, percorrendo a Itália em missões populares.", padroeiro:"Padroeiro dos publicitários."},
+  {nome:"São Bernardino Realino", tipo:"santo", origem:"Padre jesuíta italiano do século XVI e XVII, conhecido por sua dedicação pastoral e ao confessionário na cidade de Lecce.", padroeiro:"Padroeiro de Lecce, Itália."},
+  {nome:"Santa Bertilla", tipo:"santa", origem:"Religiosa italiana do século XX, enfermeira dedicada ao cuidado de crianças doentes em hospitais.", padroeiro:"Padroeira de enfermeiras pediátricas."},
+  {nome:"Santa Bianca", tipo:"santa", origem:"Nome de devoção ligado a tradições regionais europeias, associado à pureza e simplicidade de vida.", padroeiro:"Devoção local específica."},
+  {nome:"Santa Bibiana", tipo:"santa", origem:"Jovem mártir romana dos primeiros séculos do cristianismo, venerada por sua fidelidade à fé até a morte.", padroeiro:"Padroeira contra dores de cabeça e epilepsia."},
+  {nome:"Nossa Senhora da Boa Morte", tipo:"senhora", origem:"Devoção a Maria invocada para alcançar uma morte serena e em paz com Deus.", padroeiro:"Padroeira de quem busca uma boa morte cristã."},
+  {nome:"Nossa Senhora da Boa Viagem", tipo:"senhora", origem:"Devoção a Maria como protetora de viajantes, com diversos santuários costeiros no Brasil e Portugal.", padroeiro:"Padroeira de viajantes e turistas."},
+  {nome:"Nossa Senhora do Bom Encontro", tipo:"senhora", origem:"Devoção a Maria associada a encontros de reconciliação e reaproximação familiar ou espiritual.", padroeiro:"Padroeira da reconciliação."},
+  {nome:"Nossa Senhora do Bom Sucesso", tipo:"senhora", origem:"Devoção a Maria invocada para o sucesso em empreendimentos importantes da vida, com santuários em Portugal e no Brasil.", padroeiro:"Padroeira de novos empreendimentos."},
+  {nome:"São Caio", tipo:"santo", origem:"Papa do século III, governou a Igreja em período de relativa paz antes de novas perseguições romanas.", padroeiro:"Devoção romana antiga."},
+  {nome:"Santo Canuto IV", tipo:"santo", origem:"Rei da Dinamarca no século XI, conhecido por defender a Igreja e os pobres, assassinado durante uma revolta política.", padroeiro:"Padroeiro da Dinamarca."},
+  {nome:"São Casimiro", tipo:"santo", origem:"Príncipe da Polônia no século XV, conhecido por sua piedade e recusa a uma vida de luxo apesar de sua posição real.", padroeiro:"Padroeiro da Polônia e da Lituânia."},
+  {nome:"Santa Catarina da Suécia", tipo:"santa", origem:"Filha de Santa Brígida da Suécia, no século XIV, dedicou-se à vida religiosa após a morte do marido.", padroeiro:"Padroeira contra abortos espontâneos."},
+  {nome:"São César de Bus", tipo:"santo", origem:"Padre francês dos séculos XVI e XVII, fundador da Congregação dos Padres da Doutrina Cristã, dedicado à catequese popular. Foi beatificado em 1975 por Paulo VI e canonizado Santo em 15 de maio de 2022 pelo Papa Francisco.", padroeiro:"Padroeiro dos catequistas modernos."},
+  {nome:"São Cesário de Nazianzo", tipo:"santo", origem:"Irmão de São Gregório Nazianzeno, médico do século IV conhecido por sua caridade no cuidado de doentes.", padroeiro:"Padroeiro de médicos cristãos antigos."},
+  {nome:"São Constantino da Escócia", tipo:"santo", origem:"Rei ou príncipe escocês dos primeiros séculos medievais, segundo a tradição convertido à vida monástica após abdicar do trono.", padroeiro:"Padroeiro da Escócia medieval."},
+  {nome:"Santa Cristiana", tipo:"santa", origem:"Nome de devoção ligado a mártires e religiosas dos primeiros séculos do cristianismo em diferentes regiões.", padroeiro:"Devoção local específica."},
+  {nome:"Santa Cristina", tipo:"santa", origem:"Jovem mártir dos primeiros séculos do cristianismo, venerada na Itália por sua fidelidade à fé até o martírio.", padroeiro:"Padroeira de jovens mártires."},
+  {nome:"São Daniel", tipo:"santo", origem:"Profeta do Antigo Testamento, famoso por sua fidelidade a Deus mesmo na cova dos leões, no reino da Babilônia.", padroeiro:"Padroeiro de quem enfrenta perigos com fé."},
+  {nome:"Nossa Senhora do Divino Pranto", tipo:"senhora", origem:"Devoção a Maria associada às suas lágrimas diante do sofrimento de Cristo e da humanidade.", padroeiro:"Padroeira de quem chora por seus filhos."},
+  {nome:"Nossa Senhora das Dores", tipo:"senhora", origem:"Devoção a Maria sob o aspecto de sua dor diante da Paixão e morte de Jesus, simbolizada pelas sete dores marianas.", padroeiro:"Padroeira de mães que sofrem pela perda de filhos."},
+  {nome:"Santa Edith", tipo:"santa", origem:"Nome de devoção ligado a diversas santas e religiosas europeias, com destaque para tradições inglesas medievais.", padroeiro:"Devoção local específica."},
+  {nome:"Santo Efrém", tipo:"santo", origem:"Diácono sírio do século IV, conhecido como 'Harpa do Espírito Santo' por seus hinos teológicos, Doutor da Igreja.", padroeiro:"Padroeiro de poetas e hinógrafos sacros."},
+  {nome:"Santo Egidio", tipo:"santo", origem:"Eremita francês dos séculos VII e VIII, um dos santos mais venerados na Idade Média por sua vida de pobreza e milagres.", padroeiro:"Padroeiro de pessoas com deficiência."},
+  {nome:"Santa Eliana", tipo:"santa", origem:"Mártir cristã dos primeiros séculos, venerada em tradições regionais com poucos registros históricos detalhados.", padroeiro:"Devoção local específica."},
+  {nome:"Santa Elisa", tipo:"santa", origem:"Nome de devoção ligado a religiosas e mártires de tradições regionais europeias.", padroeiro:"Devoção local específica."},
+  {nome:"Santa Elisabeth", tipo:"santa", origem:"Nome de devoção que remete a Santa Isabel, prima de Maria e mãe de João Batista, venerada em diferentes tradições com este nome.", padroeiro:"Padroeira da maternidade tardia."},
+  {nome:"Santo Elói", tipo:"santo", origem:"Bispo e ourives francês do século VII, conhecido por sua habilidade artesanal antes de se tornar religioso.", padroeiro:"Padroeiro dos ourives e ferreiros."},
+  {nome:"Santa Eloisa", tipo:"santa", origem:"Nome de devoção ligado a religiosas medievais europeias, frequentemente associadas à vida monástica.", padroeiro:"Devoção local específica."},
+  {nome:"Santa Elvira", tipo:"santa", origem:"Nome de devoção ligado a tradições ibéricas, associado a rainhas e nobres com vida dedicada à religião.", padroeiro:"Devoção regional ibérica."},
+  {nome:"Santa Emilia", tipo:"santa", origem:"Mãe de São Basílio Magno e Santa Macrina, no século IV, reconhecida por formar uma família de santos na Capadócia.", padroeiro:"Padroeira de mães de famílias numerosas religiosas."},
+  {nome:"São Emiliano", tipo:"santo", origem:"Bispo ou mártir dos primeiros séculos cristãos, com veneração concentrada em tradições regionais específicas.", padroeiro:"Devoção local específica."},
+  {nome:"Santo Emmanuel Trieu", tipo:"santo", origem:"Padre vietnamita mártir do século XIX, morto durante perseguições aos cristãos no Vietnã.", padroeiro:"Padroeiro dos mártires vietnamitas."},
+  {nome:"Santo Erasmo", tipo:"santo", origem:"Bispo mártir dos primeiros séculos do cristianismo, um dos 'Catorze Santos Auxiliares' invocados em necessidades urgentes.", padroeiro:"Padroeiro dos marinheiros."},
+  {nome:"Santa Eudóxia", tipo:"santa", origem:"Mártir cristã dos primeiros séculos, segundo a tradição convertida após viver afastada da fé.", padroeiro:"Padroeira de convertidas tardias."},
+  {nome:"Santa Eufrásia", tipo:"santa", origem:"Religiosa egípcia dos primeiros séculos do cristianismo, dedicada à vida monástica em rigorosa penitência.", padroeiro:"Padroeira de monjas penitentes."},
+  {nome:"Santa Eugênia", tipo:"santa", origem:"Mártir romana dos primeiros séculos do cristianismo, segundo a tradição de família nobre convertida à fé cristã.", padroeiro:"Devoção romana antiga."},
+  {nome:"Santo Eugênio de Mazenod", tipo:"santo", origem:"Bispo francês dos séculos XVIII e XIX, fundador dos Missionários Oblatos de Maria Imaculada.", padroeiro:"Padroeiro de missionários oblatos."},
+  {nome:"Santo Evaristo", tipo:"santo", origem:"Papa dos primeiros séculos do cristianismo, governou a Igreja em tempos de intensa perseguição romana.", padroeiro:"Devoção romana antiga."},
+  {nome:"São Felipe", tipo:"santo", origem:"Um dos doze apóstolos de Jesus, segundo a tradição pregou o Evangelho na Ásia Menor, sendo martirizado por sua fé.", padroeiro:"Padroeiro de pasteleiros (tradição local italiana)."},
+  {nome:"São Félix e Santo Adauto", tipo:"santo", origem:"Mártires romanos dos primeiros séculos do cristianismo, mortos juntos por sua fé cristã.", padroeiro:"Devoção romana antiga."},
+  {nome:"São Fidelis de Sigmaringa", tipo:"santo", origem:"Advogado alemão que se tornou frade capuchinho no século XVII, martirizado durante missão de pacificação religiosa.", padroeiro:"Padroeiro dos advogados convertidos à vida religiosa."},
+  {nome:"São Firmino, bispo e mártir", tipo:"santo", origem:"Bispo de Amiens, na França, mártir dos primeiros séculos do cristianismo durante perseguições romanas.", padroeiro:"Padroeiro de Amiens, França."},
+  {nome:"Santa Flávia Domitila", tipo:"santa", origem:"Nobre romana dos primeiros séculos do cristianismo, exilada por sua fé cristã segundo a tradição histórica.", padroeiro:"Devoção romana antiga."},
+  {nome:"São Floriano", tipo:"santo", origem:"Soldado romano mártir do século III, conhecido por socorrer cristãos perseguidos antes de ser martirizado.", padroeiro:"Padroeiro dos bombeiros na Europa Central."},
+  {nome:"Santa Fortunata", tipo:"santa", origem:"Mártir cristã dos primeiros séculos, venerada em tradições regionais com poucos registros detalhados.", padroeiro:"Devoção local específica."},
+  {nome:"Santa Paula Frassinetti", tipo:"santa", origem:"Religiosa italiana do século XIX, fundadora de uma congregação dedicada à educação de crianças pobres.", padroeiro:"Padroeira de educadoras de crianças pobres."},
+  {nome:"São Frumêncio", tipo:"santo", origem:"Missionário do século IV considerado o evangelizador da Etiópia, tornando-se seu primeiro bispo.", padroeiro:"Padroeiro da Etiópia."},
+  {nome:"São Gustavo", tipo:"santo", origem:"Nome de devoção ligado a tradições escandinavas e europeias, associado à realeza convertida ao cristianismo.", padroeiro:"Devoção regional escandinava."},
+  {nome:"Santa Helena Guerra", tipo:"santa", origem:"Religiosa italiana dos séculos XIX e XX, fundadora da Congregação das Irmãs Oblatas do Espírito Santo, dedicada à promoção da devoção ao Espírito Santo e à educação feminina. Foi beatificada em 1959 e canonizada Santa em 20 de outubro de 2024 pelo Papa Francisco, com base em um milagre reconhecido no Brasil (Uberlândia, MG).", padroeiro:"Padroeira da devoção ao Espírito Santo."},
+  {nome:"Santa Heloísa", tipo:"santa", origem:"Nome de devoção ligado a religiosas medievais europeias, associado à vida de estudo e contemplação.", padroeiro:"Devoção local específica."},
+  {nome:"Santo Heriberto", tipo:"santo", origem:"Arcebispo de Colônia no século X e XI, reconhecido por sua atuação pastoral e dedicação à justiça social de sua época.", padroeiro:"Padroeiro contra secas (tradição alemã)."},
+  {nome:"Santa Inês de Praga", tipo:"santa", origem:"Princesa boêmia do século XIII, renunciou a casamentos reais para se dedicar à vida religiosa e à caridade com os pobres.", padroeiro:"Padroeira da República Tcheca."},
+  {nome:"Santa Iolanda", tipo:"santa", origem:"Princesa polonesa do século XIII, dedicou-se à caridade e à vida religiosa após enviuvar.", padroeiro:"Padroeira de viúvas nobres."},
+  {nome:"Santa Irene", tipo:"santa", origem:"Mártir cristã dos primeiros séculos do cristianismo, venerada em diferentes tradições do Mediterrâneo oriental.", padroeiro:"Devoção regional do Mediterrâneo oriental."},
+  {nome:"Santa Isadora", tipo:"santa", origem:"Religiosa egípcia dos primeiros séculos do monasticismo, conhecida por viver oculta em extrema humildade em seu mosteiro.", padroeiro:"Padroeira da humildade religiosa."},
+  {nome:"Santa Jacinta de Mariscotti", tipo:"santa", origem:"Religiosa italiana do século XVII, viveu inicialmente de modo mundano no convento até uma profunda conversão interior.", padroeiro:"Padroeira de conversões tardias na vida religiosa."},
+  {nome:"Santa Joana (Giovanna) D'Arc", tipo:"santa", origem:"Jovem francesa do século XV que, guiada por visões místicas, liderou tropas francesas na Guerra dos Cem Anos, sendo depois condenada e morta, e mais tarde canonizada.", padroeiro:"Padroeira da França e dos soldados."},
+  {nome:"São João Batista de Rossi", tipo:"santo", origem:"Padre italiano do século XVIII, dedicado ao cuidado espiritual de pobres e trabalhadores rurais em Roma.", padroeiro:"Padroeiro de trabalhadores rurais."},
+  {nome:"São João Cancio", tipo:"santo", origem:"Padre e professor polonês do século XV, reconhecido por sua caridade extrema com os pobres, dividindo até suas próprias roupas.", padroeiro:"Padroeiro de professores."},
+  {nome:"Santo João Clímaco", tipo:"santo", origem:"Monge do Monte Sinai no século VI e VII, autor da 'Escada Santa', obra clássica da espiritualidade monástica oriental.", padroeiro:"Padroeiro de monges do Oriente cristão."},
+  {nome:"São João de Brito", tipo:"santo", origem:"Jesuíta português do século XVII, missionário na Índia, martirizado por se recusar a abandonar seu trabalho evangelizador.", padroeiro:"Padroeiro de missionários na Índia."},
+  {nome:"São João Eudes", tipo:"santo", origem:"Padre francês do século XVII, fundador de congregações dedicadas à formação do clero e à devoção aos Sagrados Corações.", padroeiro:"Padroeiro de formadores de seminaristas."},
+  {nome:"São João José da Cruz", tipo:"santo", origem:"Frade franciscano italiano dos séculos XVII e XVIII, conhecido por sua extrema austeridade e vida de penitência.", padroeiro:"Padroeiro de frades penitentes."},
+  {nome:"São João Nepomuceno", tipo:"santo", origem:"Padre e confessor boêmio do século XIV, martirizado por se recusar a revelar segredos de confissão ao rei.", padroeiro:"Padroeiro do sigilo confessional."},
+  {nome:"São João Roberts", tipo:"santo", origem:"Monge beneditino galês do século XVI e XVII, martirizado durante perseguições religiosas na Inglaterra.", padroeiro:"Padroeiro dos mártires ingleses."},
+  {nome:"Santos Jonas e Barachiso", tipo:"santo", origem:"Mártires persas do século IV, mortos por encorajar cristãos presos a permanecerem fiéis durante perseguições.", padroeiro:"Devoção regional persa antiga."},
+  {nome:"São José Benedito Cotolengo", tipo:"santo", origem:"Padre italiano do século XIX, fundador de obras de caridade para doentes incuráveis e abandonados em Turim.", padroeiro:"Padroeiro de obras para doentes incuráveis."},
+  {nome:"São José Cafasso", tipo:"santo", origem:"Padre italiano do século XIX, mestre espiritual de Dom Bosco, dedicado à formação do clero e ao cuidado de presos.", padroeiro:"Padroeiro de capelães de prisões."},
+  {nome:"São José Moscati", tipo:"santo", origem:"Médico italiano do final do século XIX e início do XX, reconhecido por unir excelência científica a profunda caridade cristã com os pobres.", padroeiro:"Padroeiro dos médicos católicos."},
+  {nome:"São Josemaria Escrivá de Balaguer", tipo:"santo", origem:"Padre espanhol do século XX, fundador do Opus Dei, movimento que promove a busca da santidade na vida cotidiana e profissional.", padroeiro:"Padroeiro de profissionais leigos católicos."},
+  {nome:"Santa Júlia Billiart", tipo:"santa", origem:"Religiosa francesa dos séculos XVIII e XIX, fundadora de uma congregação dedicada à educação cristã de meninas.", padroeiro:"Padroeira de educadoras religiosas."},
+  {nome:"Santa Júlia Salzano", tipo:"santa", origem:"Religiosa italiana dos séculos XIX e XX, dedicada à catequese e à educação cristã de crianças.", padroeiro:"Padroeira de catequistas."},
+  {nome:"Santos Julita e Ciro", tipo:"santo", origem:"Mártires dos primeiros séculos do cristianismo, mãe e filho mortos juntos por sua fé.", padroeiro:"Devoção regional antiga."},
+  {nome:"Nossa Senhora das Lágrimas", tipo:"senhora", origem:"Devoção a Maria associada a relatos de imagens que choram lágrimas, interpretadas como sinal de compaixão pela humanidade.", padroeiro:"Padroeira de quem sofre profundamente."},
+  {nome:"Nossa Senhora Lampadosa", tipo:"senhora", origem:"Devoção siciliana a Maria ligada à pequena ilha de Lampedusa, no Mediterrâneo, importante ponto de passagem de migrantes.", padroeiro:"Padroeira de Lampedusa e dos migrantes do Mediterrâneo."},
+  {nome:"Santa Larissa", tipo:"santa", origem:"Mártir cristã dos primeiros séculos, venerada em tradições do leste europeu.", padroeiro:"Devoção regional do leste europeu."},
+  {nome:"Beata Laura Vicuña", tipo:"santa", beato:true, origem:"Jovem chilena do final do século XIX, conhecida por oferecer seu sofrimento e morte precoce pela conversão de sua mãe. Foi beatificada em 1988 por João Paulo II — ainda não foi canonizada Santa.", padroeiro:"Padroeira de filhos que sofrem por situações familiares difíceis."},
+  {nome:"Beata Lavínia Sernardi", tipo:"santa", beato:true, origem:"Religiosa italiana ligada a tradições de vida contemplativa e oferecimento de sofrimentos pela Igreja. Permanece como Beata, ainda sem canonização.", padroeiro:"Devoção local específica."},
+  {nome:"Santa Léia", tipo:"santa", origem:"Viúva romana dos primeiros séculos do cristianismo, elogiada por Santo Jerônimo por sua vida de oração e penitência.", padroeiro:"Padroeira de viúvas devotas."},
+  {nome:"São Leonardo de Porto Maurício", tipo:"santo", origem:"Frade franciscano italiano dos séculos XVII e XVIII, grande difusor da devoção à Via-Sacra pelas paróquias da Itália.", padroeiro:"Padroeiro da devoção à Via-Sacra."},
+  {nome:"Santa Letícia", tipo:"santa", origem:"Nome de devoção ligado a mártires e religiosas dos primeiros séculos do cristianismo.", padroeiro:"Devoção local específica."},
+  {nome:"Nossa Senhora da Libertação", tipo:"senhora", origem:"Devoção a Maria como auxílio para a libertação espiritual de vícios, opressões e dificuldades.", padroeiro:"Padroeira de quem busca libertação espiritual."},
+  {nome:"Santa Lívia", tipo:"santa", origem:"Nome de devoção ligado a tradições regionais europeias, associado à simplicidade de vida cristã.", padroeiro:"Devoção local específica."},
+  {nome:"São Lourenço", tipo:"santo", origem:"Diácono romano mártir do século III, segundo a tradição morto sobre uma grelha, mantendo o bom humor mesmo no martírio.", padroeiro:"Padroeiro dos cozinheiros e bombeiros."},
+  {nome:"São Lourenço de Brindisi", tipo:"santo", origem:"Frade capuchinho italiano dos séculos XVI e XVII, pregador poliglota que atuou em diversas missões diplomáticas da Igreja.", padroeiro:"Padroeiro de pregadores poliglotas."},
+  {nome:"São Ludgero", tipo:"santo", origem:"Bispo dos países baixos no século VIII e IX, dedicado à evangelização dos povos da Frísia e Saxônia.", padroeiro:"Padroeiro da região da Frísia."},
+  {nome:"Nossa Senhora da Luz", tipo:"senhora", origem:"Devoção a Maria como luz que ilumina o caminho dos fiéis em direção a Cristo.", padroeiro:"Padroeira de quem busca clareza nas decisões da vida."},
+  {nome:"São Marcelino de Cartago", tipo:"santo", origem:"Mártir cristão do norte da África nos primeiros séculos do cristianismo.", padroeiro:"Devoção regional norte-africana antiga."},
+  {nome:"Beata Maria Gabriella da Unidade", tipo:"santa", beato:true, origem:"Religiosa trapista italiana do século XX, ofereceu sua vida pela unidade entre os cristãos. Beatificada em 1983 — ainda sem canonização.", padroeiro:"Padroeira do ecumenismo cristão."},
+  {nome:"Santa Maria Josefina do Coração de Jesus", tipo:"santa", origem:"Religiosa ligada a congregações de espiritualidade voltada ao Sagrado Coração de Jesus.", padroeiro:"Devoção ligada ao Sagrado Coração de Jesus."},
+  {nome:"Santa Maria Micaela", tipo:"santa", origem:"Religiosa espanhola do século XIX, fundadora de uma congregação dedicada ao acolhimento de mulheres em situação de vulnerabilidade.", padroeiro:"Padroeira de obras de acolhimento a mulheres."},
+  {nome:"Bem-aventurada Maria Restituta", tipo:"santa", beato:true, origem:"Religiosa austríaca enfermeira, executada pelo regime nazista no século XX por se recusar a remover crucifixos de um hospital. Beatificada em 1998 — ainda sem canonização.", padroeiro:"Padroeira de enfermeiras e mártires do nazismo."},
+  {nome:"Santa Marina", tipo:"santa", origem:"Nome de devoção ligado a mártires e religiosas dos primeiros séculos do cristianismo, especialmente em tradições do Oriente.", padroeiro:"Devoção regional do Oriente cristão."},
+  {nome:"São Martiniano", tipo:"santo", origem:"Eremita dos primeiros séculos do monasticismo cristão, conhecido por sua rigorosa vida de penitência.", padroeiro:"Padroeiro de eremitas penitentes."},
+  {nome:"São Mateus", tipo:"santo", origem:"Cobrador de impostos chamado por Jesus para ser um dos doze apóstolos, autor do primeiro Evangelho do Novo Testamento.", padroeiro:"Padroeiro dos contadores e financistas."},
+  {nome:"Santa Melissa", tipo:"santa", origem:"Nome de devoção ligado a tradições regionais cristãs, sem registros históricos amplamente documentados.", padroeiro:"Devoção local específica."},
+  {nome:"Menina Izildinha", tipo:"santo", origem:"Devoção popular brasileira a uma criança falecida em circunstâncias trágicas, venerada informalmente por fiéis em busca de graças.", padroeiro:"Devoção popular brasileira, sem reconhecimento oficial da Igreja."},
+  {nome:"Menino Jesus de Praga", tipo:"santo", origem:"Devoção ligada a uma imagem de cera de Jesus menino, na República Tcheca, trazida da Espanha no século XVI e associada a numerosas graças.", padroeiro:"Padroeiro da infância e das famílias."},
+  {nome:"São Mizael", tipo:"santo", origem:"Um dos três jovens do livro de Daniel que, no Antigo Testamento, permaneceram fiéis a Deus mesmo diante da fornalha ardente.", padroeiro:"Padroeiro de quem enfrenta provas com fé."},
+  {nome:"São Nicéforo", tipo:"santo", origem:"Patriarca de Constantinopla nos séculos VIII e IX, defensor da veneração de imagens sacras durante a crise iconoclasta.", padroeiro:"Padroeiro da arte sacra cristã."},
+  {nome:"São Nicolau de Flue", tipo:"santo", origem:"Eremita suíço do século XV, conhecido por mediar conflitos políticos em seu país antes de se retirar à vida contemplativa.", padroeiro:"Padroeiro da Suíça."},
+  {nome:"Santa Nicole", tipo:"santa", origem:"Nome de devoção ligado a tradições regionais francesas, associado à simplicidade de vida cristã.", padroeiro:"Devoção local específica."},
+  {nome:"Nossa Senhora Nazaré", tipo:"senhora", origem:"Devoção a Maria ligada à cidade de Nazaré, onde viveu com José e Jesus, com importante santuário em Portugal.", padroeiro:"Padroeira de Nazaré, Portugal."},
+  {nome:"Santa Olga", tipo:"santa", origem:"Princesa russa do século X, primeira governante eslava a se converter ao cristianismo, avó de São Vladimir.", padroeiro:"Padroeira da Rússia antiga."},
+  {nome:"Santo Oliver Plunkett", tipo:"santo", origem:"Arcebispo irlandês do século XVII, martirizado na Inglaterra durante perseguições religiosas contra católicos irlandeses.", padroeiro:"Padroeiro da Irlanda perseguida."},
+  {nome:"Santo Onésimo", tipo:"santo", origem:"Escravo mencionado na Carta de São Paulo a Filemon, convertido ao cristianismo e depois libertado, tornando-se bispo.", padroeiro:"Padroeiro de pessoas escravizadas convertidas à fé."},
+  {nome:"São Pacômio", tipo:"santo", origem:"Monge egípcio do século IV, considerado fundador da vida monástica em comunidade (cenobítica), diferente da vida solitária dos eremitas.", padroeiro:"Padroeiro de comunidades monásticas."},
+  {nome:"São Pancrácio", tipo:"santo", origem:"Jovem mártir romano do século III ou IV, morto ainda adolescente por sua fé cristã.", padroeiro:"Padroeiro de juramentos e promessas."},
+  {nome:"São Peregrino", tipo:"santo", origem:"Religioso italiano do século XIII e XIV, conhecido por sua cura milagrosa de um câncer através da oração.", padroeiro:"Padroeiro de pacientes com câncer."},
+  {nome:"Nossa Senhora da Piedade", tipo:"senhora", origem:"Devoção a Maria associada à imagem de Pietà, segurando o corpo de Jesus após a descida da cruz.", padroeiro:"Padroeira de mães que perderam filhos."},
+  {nome:"Nossa Senhora do Pilar", tipo:"senhora", origem:"Devoção espanhola a Maria ligada a um santuário em Saragoça, segundo a tradição o primeiro templo mariano da cristandade.", padroeiro:"Padroeira da Espanha e da Guarda Civil espanhola."},
+  {nome:"São Plácido", tipo:"santo", origem:"Discípulo de São Bento no século VI, segundo a tradição salvo de afogamento por intervenção miraculosa de seu mestre.", padroeiro:"Padroeiro de monges beneditinos jovens."},
+  {nome:"São Policarpo", tipo:"santo", origem:"Bispo de Esmirna no século II, discípulo do apóstolo São João, martirizado por se recusar a negar sua fé cristã.", padroeiro:"Padroeiro contra a disenteria."},
+  {nome:"São Porfírio de Gaza", tipo:"santo", origem:"Bispo de Gaza nos séculos IV e V, conhecido por sua atuação na evangelização da região e combate a práticas pagãs.", padroeiro:"Padroeiro de Gaza nos primeiros séculos cristãos."},
+  {nome:"Santa Prisca", tipo:"santa", origem:"Jovem mártir romana dos primeiros séculos do cristianismo, venerada por sua fidelidade à fé até a morte.", padroeiro:"Devoção romana antiga."},
+  {nome:"São Prosdócimo", tipo:"santo", origem:"Primeiro bispo de Pádua, na Itália, nos primeiros séculos do cristianismo, segundo a tradição discípulo de São Pedro.", padroeiro:"Padroeiro de Pádua, Itália."},
+  {nome:"Santa Rafaela Maria do Sagrado Coração de Jesus", tipo:"santa", origem:"Religiosa espanhola do século XIX, fundadora de uma congregação dedicada à adoração eucarística e formação cristã.", padroeiro:"Padroeira de congregações de adoração eucarística."},
+  {nome:"Santa Raimunda", tipo:"santa", origem:"Nome de devoção ligado a tradições regionais ibéricas, associado à vida de oração e caridade.", padroeiro:"Devoção local específica."},
+  {nome:"São Raimundo Zanfogni", tipo:"santo", origem:"Religioso italiano da Idade Média, conhecido por sua atuação na pacificação de conflitos urbanos em sua região.", padroeiro:"Padroeiro de pacificadores locais."},
+  {nome:"Mãe Rainha", tipo:"senhora", origem:"Título devocional que celebra Maria como Mãe e Rainha, reunindo maternidade e realeza espiritual.", padroeiro:"Padroeira da maternidade espiritual da Igreja."},
+  {nome:"Nossa Senhora Rainha das Missões", tipo:"senhora", origem:"Devoção a Maria como protetora e guia de todo trabalho missionário da Igreja pelo mundo.", padroeiro:"Padroeira dos missionários."},
+  {nome:"São Ranieri de Pisa", tipo:"santo", origem:"Comerciante italiano do século XII que, após uma profunda conversão, abandonou os negócios para viver em peregrinação e penitência.", padroeiro:"Padroeiro de Pisa, Itália."},
+  {nome:"Santa Rebeca", tipo:"santa", origem:"Figura do Antigo Testamento, esposa do patriarca Isaque e mãe de Jacó e Esaú, lembrada por sua fé e discernimento.", padroeiro:"Padroeira de esposas e mães do Antigo Testamento."},
+  {nome:"Santa Regina", tipo:"santa", origem:"Jovem mártir francesa dos primeiros séculos do cristianismo, morta por se recusar a abandonar sua fé.", padroeiro:"Devoção regional francesa antiga."},
+  {nome:"Santos Reis", tipo:"santo", origem:"Devoção aos Três Reis Magos que, segundo o Evangelho de Mateus, vieram do Oriente guiados por uma estrela para adorar Jesus recém-nascido.", padroeiro:"Padroeiros dos viajantes guiados pela fé."},
+  {nome:"São Renato Goupil", tipo:"santo", origem:"Missionário jesuíta francês do século XVII, martirizado durante missão evangelizadora entre povos indígenas da América do Norte.", padroeiro:"Padroeiro de missionários na América do Norte."},
+  {nome:"São Ricardo", tipo:"santo", origem:"Rei anglo-saxão dos primeiros séculos medievais, pai de santos missionários que evangelizaram regiões da atual Alemanha.", padroeiro:"Padroeiro de pais de vocações religiosas."},
+  {nome:"São Roberto", tipo:"santo", origem:"Nome de devoção ligado a diversos santos medievais europeus, frequentemente associados à vida monástica reformadora.", padroeiro:"Devoção local específica."},
+  {nome:"São Roberto de Turlande", tipo:"santo", origem:"Fundador da Abadia de La Chaise-Dieu, na França, no século XI, dedicada à vida monástica beneditina.", padroeiro:"Padroeiro de comunidades monásticas francesas."},
+  {nome:"São Romão e São Lupicino", tipo:"santo", origem:"Irmãos eremitas franceses do século V, fundadores de mosteiros na região do Jura, na fronteira franco-suíça.", padroeiro:"Padroeiros de comunidades monásticas da região do Jura."},
+  {nome:"São Roque Gonzáles e companheiros mártires", tipo:"santo", origem:"Missionário jesuíta paraguaio do século XVII, martirizado junto a companheiros durante a evangelização dos povos guarani.", padroeiro:"Padroeiro dos povos guarani e missionários no Paraguai."},
+  {nome:"Santa Rosália", tipo:"santa", origem:"Eremita siciliana do século XII, viveu em uma gruta dedicada à oração, sendo invocada na Sicília contra epidemias.", padroeiro:"Padroeira de Palermo, Itália."},
+  {nome:"São Ruperto", tipo:"santo", origem:"Bispo missionário dos séculos VII e VIII, evangelizador da região da atual Áustria e fundador da cidade de Salzburgo.", padroeiro:"Padroeiro de Salzburgo, Áustria."},
+  {nome:"São Sabas", tipo:"santo", origem:"Monge da Capadócia e da Palestina nos séculos V e VI, fundador de importantes mosteiros na região do deserto da Judeia.", padroeiro:"Padroeiro de monges do deserto da Judeia."},
+  {nome:"Santa Sara", tipo:"santa", origem:"Esposa do patriarca Abraão no Antigo Testamento, mãe de Isaque, lembrada por sua fé apesar das dificuldades em ter filhos.", padroeiro:"Padroeira de mulheres que desejam ter filhos."},
+  {nome:"Nossa Senhora da Saudade", tipo:"senhora", origem:"Devoção a Maria associada ao sentimento de saudade de quem perdeu pessoas queridas ou vive afastado de sua terra.", padroeiro:"Padroeira de quem sente saudade e distância."},
+  {nome:"Santo Serapião", tipo:"santo", origem:"Religioso mercedário espanhol dos séculos XII e XIII, martirizado durante missão de resgate de cativos cristãos no norte da África.", padroeiro:"Padroeiro de resgatadores de cativos."},
+  {nome:"Os sete fundadores da Ordem dos Servitas", tipo:"santo", origem:"Grupo de sete leigos florentinos do século XIII que se retiraram à vida religiosa e fundaram a Ordem dos Servos de Maria.", padroeiro:"Padroeiros da Ordem dos Servitas."},
+  {nome:"Nossa Senhora do Silêncio", tipo:"senhora", origem:"Devoção a Maria associada ao silêncio contemplativo e à meditação interior diante dos mistérios de Deus.", padroeiro:"Padroeira da vida contemplativa e da oração silenciosa."},
+  {nome:"Santa Sílvia", tipo:"santa", origem:"Mãe de São Gregório Magno, no século VI, reconhecida por sua vida de oração e dedicação à formação cristã do filho.", padroeiro:"Padroeira de mães de vocações religiosas."},
+  {nome:"São Simeão", tipo:"santo", origem:"Ancião mencionado no Evangelho de Lucas que reconheceu Jesus como o Messias ao vê-lo apresentado no Templo.", padroeiro:"Padroeiro de idosos fiéis em oração."},
+  {nome:"São Simplício", tipo:"santo", origem:"Papa do século V, governou a Igreja em período de grandes transformações políticas no Império Romano do Ocidente.", padroeiro:"Devoção romana antiga."},
+  {nome:"Santa Solange", tipo:"santa", origem:"Jovem pastora francesa do século IX, martirizada ao resistir a uma tentativa de violência contra sua pessoa.", padroeiro:"Padroeira de pastoras e jovens do campo."},
+  {nome:"Nossa Senhora da Solidão", tipo:"senhora", origem:"Devoção a Maria em sua solidão após a morte de Jesus, antes da notícia da Ressurreição.", padroeiro:"Padroeira de quem vive momentos de solidão e luto."},
+  {nome:"Santa Sonia", tipo:"santa", origem:"Nome de devoção ligado a tradições do leste europeu, frequentemente associado à sabedoria espiritual.", padroeiro:"Devoção regional do leste europeu."},
+  {nome:"Nossa Senhora do Sorriso", tipo:"senhora", origem:"Devoção a Maria como sinal de alegria e esperança em meio às dificuldades da vida.", padroeiro:"Padroeira da alegria espiritual."},
+  {nome:"São Sotero", tipo:"santo", origem:"Papa do século II, governou a Igreja em período de expansão do cristianismo pelo Império Romano.", padroeiro:"Devoção romana antiga."},
+  {nome:"Santa Tatiana", tipo:"santa", origem:"Jovem mártir romana dos primeiros séculos do cristianismo, muito venerada na tradição russa ortodoxa.", padroeiro:"Padroeira dos estudantes (tradição russa)."},
+  {nome:"São Teodoro – Mártir", tipo:"santo", origem:"Soldado romano mártir dos primeiros séculos do cristianismo, venerado especialmente nas tradições do Oriente cristão.", padroeiro:"Padroeiro de soldados do Oriente cristão."},
+  {nome:"Santa Thaís", tipo:"santa", origem:"Segundo a tradição, mulher egípcia dos primeiros séculos do cristianismo que se converteu e dedicou o restante da vida à penitência.", padroeiro:"Padroeira de conversões profundas."},
+  {nome:"São Tiago das Marcas", tipo:"santo", origem:"Frade franciscano italiano do século XV, pregador conhecido por sua atuação contra abusos financeiros de sua época.", padroeiro:"Padroeiro de pregadores sobre justiça social."},
+  {nome:"São Timóteo", tipo:"santo", origem:"Discípulo e colaborador de São Paulo, destinatário de duas cartas do Novo Testamento, tornou-se bispo de Éfeso.", padroeiro:"Padroeiro de jovens líderes na Igreja."},
+  {nome:"São Tomás Becket", tipo:"santo", origem:"Arcebispo de Canterbury no século XII, martirizado por defender a independência da Igreja frente ao poder do rei da Inglaterra.", padroeiro:"Padroeiro do clero perseguido pelo poder político."},
+  {nome:"Santo Tomas de Cori", tipo:"santo", origem:"Frade franciscano italiano dos séculos XVIII, conhecido por sua intensa vida de oração e dedicação à pregação popular.", padroeiro:"Padroeiro de pregadores franciscanos."},
+  {nome:"São Tomás More", tipo:"santo", origem:"Estadista inglês do século XVI, chanceler do reino, martirizado por se recusar a romper com a autoridade da Igreja Católica.", padroeiro:"Padroeiro de advogados e políticos."},
+  {nome:"Nossa Senhora dos Trinta e Três", tipo:"senhora", origem:"Devoção sul-americana a Maria associada à reconciliação entre povos, com origem ligada à história do Uruguai.", padroeiro:"Padroeira do Uruguai."},
+  {nome:"Santo Ulrico", tipo:"santo", origem:"Bispo alemão do século X, conhecido por defender sua cidade durante invasões e por sua atuação pastoral dedicada.", padroeiro:"Padroeiro de Augsburgo, Alemanha."},
+  {nome:"Santo Urbano V", tipo:"santo", origem:"Papa francês do século XIV, conhecido por tentar reformas na Igreja e por seu empenho em devolver o papado a Roma.", padroeiro:"Padroeiro de reformas eclesiásticas."},
+  {nome:"Santa Úrsula Ledochowska", tipo:"santa", origem:"Religiosa polonesa dos séculos XIX e XX, fundadora de uma congregação dedicada à educação cristã em meio a conflitos políticos.", padroeiro:"Padroeira de educadoras em tempos de guerra."},
+  {nome:"São Valentim e Valentim de Terni", tipo:"santo", origem:"Sacerdotes mártires dos primeiros séculos do cristianismo, frequentemente associados à devoção popular ligada ao amor e aos casais.", padroeiro:"Padroeiros dos namorados."},
+  {nome:"Santa Valentina", tipo:"santa", origem:"Jovem mártir cristã dos primeiros séculos, venerada em tradições regionais do Mediterrâneo oriental.", padroeiro:"Devoção regional do Mediterrâneo oriental."},
+  {nome:"São Valério de Treviri", tipo:"santo", origem:"Bispo dos primeiros séculos do cristianismo na região da atual Alemanha, dedicado à organização da Igreja local.", padroeiro:"Padroeiro de Treviri, Alemanha."},
+  {nome:"Santa Veridiana", tipo:"santa", origem:"Eremita italiana do século XII e XIII, viveu reclusa em intensa penitência e oração por décadas.", padroeiro:"Padroeira de eremitas reclusas."},
+  {nome:"São Vilibaldo", tipo:"santo", origem:"Bispo inglês do século VIII, missionário na região da atual Alemanha junto a São Bonifácio.", padroeiro:"Padroeiro de missionários ingleses na Alemanha."},
+  {nome:"Nossa Senhora das Virtudes", tipo:"senhora", origem:"Devoção a Maria como modelo de virtudes cristãs a serem imitadas pelos fiéis em sua vida diária.", padroeiro:"Padroeira do crescimento nas virtudes cristãs."},
+  {nome:"São Vítor", tipo:"santo", origem:"Soldado romano mártir dos primeiros séculos do cristianismo, venerado em diferentes regiões da Europa.", padroeiro:"Padroeiro de soldados cristãos antigos."},
+  {nome:"Nossa Senhora das Vitórias", tipo:"senhora", origem:"Devoção a Maria associada a vitórias históricas atribuídas à sua intercessão, com destaque para a Batalha de Lepanto.", padroeiro:"Padroeira de vitórias espirituais e históricas."},
+  {nome:"São Xisto III", tipo:"santo", origem:"Papa do século V, responsável por importantes obras na basílica de Santa Maria Maior, em Roma.", padroeiro:"Devoção romana antiga."},
+  {nome:"Beato Zeferino Gimenez Malla", tipo:"santo", beato:true, origem:"Cigano espanhol do século XX, fuzilado durante a Guerra Civil Espanhola por defender um padre perseguido e se recusar a renunciar ao rosário. Foi beatificado por João Paulo II em 1997 — ainda não foi canonizado Santo pela Igreja.", padroeiro:"Padroeiro do povo cigano/Rom."},
+  {nome:"Santa Zenaide", tipo:"santa", origem:"Médica e religiosa dos primeiros séculos do cristianismo, conhecida junto à sua irmã Filonila por cuidar gratuitamente dos pobres.", padroeiro:"Padroeira de médicas cristãs antigas."}
+];
+
+const grid = document.getElementById('grid');
+const search = document.getElementById('search');
+const filters = document.getElementById('filters');
+const overlay = document.getElementById('overlay');
+const modal = document.getElementById('modal');
+let activeFilter = 'todos';
+
+function initial(nome){
+  // skip "São"/"Santa"/"Santo"/"Nossa Senhora" to get a meaningful initial
+  const stop = ["são","santo","santa","nossa","senhora","de","do","da"];
+  const words = nome.split(" ");
+  for(const w of words){
+    if(!stop.includes(w.toLowerCase())) return w[0].toUpperCase();
+  }
+  return nome[0];
+}
+
+function render(){
+  const q = search.value.trim().toLowerCase();
+  const filtered = dados.filter(d=>{
+    let matchesFilter;
+    if(activeFilter === 'todos') matchesFilter = true;
+    else if(activeFilter === 'beato') matchesFilter = d.beato === true;
+    else matchesFilter = d.tipo === activeFilter;
+    const matchesSearch = !q || d.nome.toLowerCase().includes(q) || d.padroeiro.toLowerCase().includes(q) || d.origem.toLowerCase().includes(q);
+    return matchesFilter && matchesSearch;
+  });
+
+  grid.innerHTML = '';
+  if(filtered.length === 0){
+    grid.innerHTML = '<div class="empty">Nenhum resultado encontrado. Tente outro termo de busca.</div>';
+    return;
+  }
+
+  filtered.forEach(d=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="initial">${initial(d.nome)}</div>
+      <p class="card-name">${d.nome}</p>
+      <div class="card-tag">${tagLabel(d)}</div>
+      <p class="card-padroeiro">${d.padroeiro}</p>
+    `;
+    card.addEventListener('click', ()=>openModal(d));
+    grid.appendChild(card);
+  });
+}
+
+function tagLabel(d){
+  if(d.beato) return d.statusLabel ? d.statusLabel : 'Beato(a) — não canonizado';
+  if(d.tipo === 'senhora') return 'Nossa Senhora';
+  if(d.tipo === 'santa') return 'Santa';
+  return 'Santo';
+}
+
+function openModal(d){
+  let extra = '';
+  if(d.beato){
+    extra += `
+    <div class="modal-section" style="border-top:none; padding-top:0;">
+      <p style="font-size:13px; color:var(--gold-bright); font-style:italic;">⚠️ Ainda não canonizado(a) pela Igreja Católica — título atual: ${d.statusLabel ? d.statusLabel : 'Beato(a)'}.</p>
+    </div>`;
+  }
+  if(d.curiosidade){
+    extra += `
+    <div class="modal-section">
+      <h3>Curiosidade</h3>
+      <p>${d.curiosidade}</p>
+    </div>`;
+  }
+  if(d.oracao){
+    extra += `
+    <div class="modal-section">
+      <h3>Oração breve</h3>
+      <p class="oracao">${d.oracao}</p>
+    </div>`;
+  }
+  modal.innerHTML = `
+    <button class="modal-close" id="closeBtn">✕</button>
+    <div class="initial">${initial(d.nome)}</div>
+    <h2>${d.nome}</h2>
+    <div class="card-tag">${tagLabel(d)}</div>
+    <div class="modal-section">
+      <h3>Origem / Aparição</h3>
+      <p>${d.origem}</p>
+    </div>
+    <div class="modal-section">
+      <h3>Padroeiro(a) de</h3>
+      <p>${d.padroeiro}</p>
+    </div>
+    ${extra}
+  `;
+  overlay.classList.add('open');
+  document.getElementById('closeBtn').addEventListener('click', closeModal);
+}
+
+function closeModal(){
+  overlay.classList.remove('open');
+}
+
+overlay.addEventListener('click', (e)=>{
+  if(e.target === overlay) closeModal();
+});
+
+filters.addEventListener('click', (e)=>{
+  if(!e.target.classList.contains('filter-pill')) return;
+  document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+  e.target.classList.add('active');
+  activeFilter = e.target.dataset.filter;
+  render();
+});
+
+search.addEventListener('input', render);
+
+render();
+</script>
+
+</body>
+</html>
